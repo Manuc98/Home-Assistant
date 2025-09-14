@@ -1,0 +1,359 @@
+# Grupos da Casa Inteligente
+# Organização lógica de dispositivos e entidades
+
+# ==========================================
+# GRUPOS PRINCIPAIS
+# ==========================================
+
+# Grupo de todas as luzes
+luzes_casa:
+  name: "Todas as Luzes"
+  icon: mdi:lightbulb-group
+  entities:
+    - light.sala
+    - light.cozinha
+    - light.quarto_principal
+    - light.corredor
+    - light.entrada
+    - light.luz_ambiente_sala
+    - light.mesa_jantar
+
+# Grupo de climatização
+climatizacao_casa:
+  name: "Climatização da Casa"
+  icon: mdi:thermometer
+  entities:
+    - climate.sala
+    - climate.quarto_principal
+    - climate.cozinha
+    - fan.purificador_ar_sala
+    - fan.purificador_ar_quarto
+
+# Grupo de segurança
+seguranca_casa:
+  name: "Segurança da Casa"
+  icon: mdi:shield-home
+  entities:
+    - alarm_control_panel.casa
+    - camera.entrada
+    - camera.quarto
+    - camera.garagem
+    - binary_sensor.porta_entrada
+    - binary_sensor.janelas_sala
+    - binary_sensor.movimento_quintal
+    - binary_sensor.fumaça_cozinha
+
+# Grupo de entretenimento
+entretenimento_casa:
+  name: "Entretenimento da Casa"
+  icon: mdi:music
+  entities:
+    - media_player.tv_sala
+    - media_player.sistema_som
+    - media_player.assistente_voz
+    - media_player.spotify_sala
+    - media_player.spotify_cozinha
+    - media_player.spotify_quarto
+
+# Grupo de eletrodomésticos
+eletrodomesticos:
+  name: "Eletrodomésticos"
+  icon: mdi:home-appliance
+  entities:
+    - switch.cafeteira_inteligente
+    - switch.tostadeira
+    - switch.microondas
+    - switch.ar_condicionado_sala
+
+# ==========================================
+# GRUPOS POR AMBIENTE
+# ==========================================
+
+# Sala de estar
+sala_estar:
+  name: "Sala de Estar"
+  icon: mdi:sofa
+  entities:
+    - light.sala
+    - light.luz_ambiente_sala
+    - light.mesa_jantar
+    - climate.sala
+    - media_player.tv_sala
+    - media_player.sistema_som
+    - media_player.spotify_sala
+    - fan.purificador_ar_sala
+    - cover.cortinas_sala
+    - cover.janelas_sala
+    - sensor.temperatura_sala
+    - sensor.humidade_sala
+    - sensor.qualidade_ar_sala
+    - binary_sensor.presenca_sala
+
+# Cozinha
+cozinha:
+  name: "Cozinha"
+  icon: mdi:chef-hat
+  entities:
+    - light.cozinha
+    - climate.cozinha
+    - media_player.spotify_cozinha
+    - switch.cafeteira_inteligente
+    - switch.tostadeira
+    - switch.microondas
+    - sensor.temperatura_cozinha
+    - sensor.humidade_cozinha
+    - sensor.qualidade_ar_cozinha
+    - binary_sensor.presenca_cozinha
+    - binary_sensor.fumaça_cozinha
+
+# Quarto principal
+quarto_principal:
+  name: "Quarto Principal"
+  icon: mdi:bed
+  entities:
+    - light.quarto_principal
+    - climate.quarto_principal
+    - media_player.spotify_quarto
+    - fan.purificador_ar_quarto
+    - cover.cortinas_quarto
+    - sensor.temperatura_quarto
+    - sensor.humidade_quarto
+    - sensor.qualidade_ar_quarto
+    - binary_sensor.presenca_quarto_principal
+    - binary_sensor.sono_detectado
+
+# Corredor e entrada
+corredor_entrada:
+  name: "Corredor e Entrada"
+  icon: mdi:walk
+  entities:
+    - light.corredor
+    - light.entrada
+    - camera.entrada
+    - binary_sensor.porta_entrada
+    - binary_sensor.presenca_corredor
+    - binary_sensor.presenca_entrada
+
+# Área externa
+area_externa:
+  name: "Área Externa"
+  icon: mdi:tree
+  entities:
+    - camera.quintal
+    - camera.garagem
+    - binary_sensor.movimento_quintal
+    - light.exterior
+    - light.quintal
+
+# ==========================================
+# GRUPOS DE SENSORES
+# ==========================================
+
+# Sensores ambientais
+sensores_ambientais:
+  name: "Sensores Ambientais"
+  icon: mdi:thermometer-lines
+  entities:
+    - sensor.temperatura_sala
+    - sensor.humidade_sala
+    - sensor.qualidade_ar_sala
+    - sensor.temperatura_quarto
+    - sensor.humidade_quarto
+    - sensor.qualidade_ar_quarto
+    - sensor.temperatura_cozinha
+    - sensor.humidade_cozinha
+    - sensor.qualidade_ar_cozinha
+
+# Sensores de presença
+sensores_presenca:
+  name: "Sensores de Presença"
+  icon: mdi:motion-sensor
+  entities:
+    - binary_sensor.presenca_sala
+    - binary_sensor.presenca_cozinha
+    - binary_sensor.presenca_quarto_principal
+    - binary_sensor.presenca_corredor
+    - binary_sensor.presenca_entrada
+    - binary_sensor.sono_detectado
+
+# Sensores de segurança
+sensores_seguranca:
+  name: "Sensores de Segurança"
+  icon: mdi:shield-alert
+  entities:
+    - binary_sensor.porta_entrada
+    - binary_sensor.janelas_sala
+    - binary_sensor.movimento_quintal
+    - binary_sensor.fumaça_cozinha
+    - camera.entrada
+    - camera.quarto
+    - camera.garagem
+
+# ==========================================
+# GRUPOS DE ENERGIA
+# ==========================================
+
+# Monitoramento de energia
+energia_casa:
+  name: "Monitoramento de Energia"
+  icon: mdi:lightning-bolt
+  entities:
+    - sensor.consumo_energia_total
+    - sensor.custo_energia_diario
+    - sensor.eficiencia_energetica
+    - sensor.potencia_solar
+    - sensor.consumo_ar_condicionado
+    - sensor.consumo_cafeteira
+    - sensor.consumo_tv
+    - sensor.consumo_luzes
+    - sensor.consumo_eletrodomesticos
+
+# ==========================================
+# GRUPOS DE AUTOMAÇÃO
+# ==========================================
+
+# Automações principais
+automacoes_principais:
+  name: "Automações Principais"
+  icon: mdi:robot
+  entities:
+    - automation.automacao_bom_dia
+    - automation.iluminacao_presenca_corredor
+    - automation.desligar_luzes_ausencia
+    - automation.preparar_casa_chegada
+    - automation.qualidade_ar_purificadores
+    - automation.alarme_intrusao
+    - automation.fechar_janelas_chuva
+    - automation.noite_cinema
+    - automation.economia_energia_sair_casa
+
+# Scripts
+scripts_casa:
+  name: "Scripts da Casa"
+  icon: mdi:script-text
+  entities:
+    - script.rotina_matinal
+    - script.noite_cinema
+    - script.modo_sono
+    - script.chegada_casa
+    - script.seguranca_maxima
+    - script.economia_energia
+    - script.manutencao_sistema
+    - script.modo_festa
+    - script.emergencia
+
+# Cenas
+cenas_casa:
+  name: "Cenas da Casa"
+  icon: mdi:palette
+  entities:
+    - scene.despertar_suave
+    - scene.manha_ativa
+    - scene.relaxamento_noturno
+    - scene.sono_profundo
+    - scene.cinema
+    - scene.festa
+    - scene.jantar_romantico
+    - scene.trabalho
+    - scene.reuniao_online
+    - scene.ausencia_simulada
+    - scene.alerta_seguranca
+    - scene.economia_energia
+    - scene.modo_noturno
+    - scene.ambiente_inverno
+    - scene.ambiente_verao
+
+# ==========================================
+# GRUPOS DE SISTEMA
+# ==========================================
+
+# Status do sistema
+status_sistema:
+  name: "Status do Sistema"
+  icon: mdi:home-automation
+  entities:
+    - sensor.uptime
+    - sensor.versao_home_assistant
+    - sensor.dispositivos_online
+    - sensor.total_dispositivos
+    - sensor.status_sistema
+    - sensor.status_integracoes
+    - sensor.comandos_voz_hoje
+
+# Configurações
+configuracoes:
+  name: "Configurações"
+  icon: mdi:cog
+  entities:
+    - input_boolean.notificacoes_telegram
+    - input_boolean.notificacoes_email
+    - input_boolean.manutencao_concluida
+    - input_number.temperatura_desejada_sala
+    - input_select.modo_clima_sala
+    - input_select.idioma_assistente
+    - input_text.comando_voz_customizado
+    - input_boolean.ativar_reconhecimento_voz
+    - input_boolean.ativar_sintese_voz
+    - input_boolean.modo_privacidade_voz
+
+# ==========================================
+# GRUPOS DE NOTIFICAÇÕES
+# ==========================================
+
+# Notificações
+notificacoes:
+  name: "Notificações"
+  icon: mdi:bell
+  entities:
+    - notify.telegram
+    - notify.email
+    - input_boolean.notificacoes_telegram
+    - input_boolean.notificacoes_email
+
+# ==========================================
+# GRUPOS DE VOZ E ASSISTENTE
+# ==========================================
+
+# Assistente de voz
+assistente_voz:
+  name: "Assistente de Voz"
+  icon: mdi:microphone
+  entities:
+    - media_player.assistente_voz
+    - input_select.idioma_assistente
+    - input_boolean.ativar_reconhecimento_voz
+    - input_boolean.ativar_sintese_voz
+    - input_boolean.modo_privacidade_voz
+    - input_text.comando_voz_customizado
+    - sensor.comandos_voz_hoje
+
+# ==========================================
+# GRUPOS DE INFORMAÇÕES EXTERNAS
+# ==========================================
+
+# Informações externas
+info_externas:
+  name: "Informações Externas"
+  icon: mdi:information
+  entities:
+    - weather.casa
+    - calendar.agenda_pessoal
+    - sensor.forecast_solar
+    - sensor.previsao_consumo_amanha
+    - sensor.recomendacao_economia
+
+# ==========================================
+# GRUPOS DE ESTATÍSTICAS
+# ==========================================
+
+# Estatísticas da casa
+estatisticas_casa:
+  name: "Estatísticas da Casa"
+  icon: mdi:chart-line
+  entities:
+    - sensor.indice_conforto_casa
+    - sensor.atividade_casa
+    - sensor.ultima_atividade
+    - sensor.dispositivos_seguranca_ativos
+    - sensor.status_qualidade_ar
+    - sensor.conforto_termico

@@ -1,0 +1,63 @@
+MIT License
+
+Copyright (c) 2024 Casa Inteligente - Home Assistant
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Disclaimer / Isenção de Responsabilidade
+
+Este projeto é fornecido "como está" e é destinado apenas para fins educacionais e de demonstração. 
+
+**IMPORTANTE**: Este software não é oficialmente afiliado ou endossado pelo Home Assistant ou qualquer uma das suas organizações associadas. Home Assistant é uma marca registrada de Nabu Casa Inc.
+
+### Limitações de Responsabilidade
+
+- O uso deste software é por sua conta e risco
+- Não garantimos que o software funcionará conforme esperado
+- Não somos responsáveis por danos diretos, indiretos, incidentais ou consequenciais
+- Não somos responsáveis por perda de dados, interrupção de negócios ou outros problemas
+- Você é responsável por fazer backups adequados antes de usar este software
+
+### Segurança
+
+- Configure adequadamente todas as senhas e chaves de API
+- Mantenha o sistema atualizado com as últimas correções de segurança
+- Use conexões seguras (HTTPS/SSL) em produção
+- Monitore regularmente os logs de segurança
+
+### Conformidade
+
+- Respeite as leis locais de privacidade e proteção de dados
+- Configure adequadamente as notificações e monitoramento
+- Mantenha backups regulares dos seus dados
+- Teste todas as configurações em ambiente controlado antes de usar em produção
+
+### Suporte
+
+Este é um projeto de código aberto. O suporte é fornecido pela comunidade através dos canais oficiais do Home Assistant:
+
+- [Home Assistant Community](https://community.home-assistant.io/)
+- [Home Assistant Documentation](https://www.home-assistant.io/docs/)
+- [Home Assistant GitHub](https://github.com/home-assistant/core)
+
+---
+
+**Use este software com responsabilidade e sempre priorize a segurança da sua casa e dados pessoais.**

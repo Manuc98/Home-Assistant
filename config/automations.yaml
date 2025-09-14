@@ -1,0 +1,341 @@
+# Automações da Casa Inteligente
+# Sistema de Automação Contextual
+
+# ==========================================
+# AUTOMAÇÕES MATINAIS - "Bom Dia"
+# ==========================================
+
+# Automação principal de despertar
+- id: 'automacao_bom_dia'
+  alias: 'Bom Dia - Rotina Matinal'
+  description: 'Automação principal quando o usuário acorda'
+  trigger:
+    - platform: state
+      entity_id: sensor.presenca_quarto_principal
+      to: 'on'
+      for:
+        minutes: 2
+    - platform: time
+      at: '07:00:00'
+  condition:
+    - condition: time
+      after: '06:00:00'
+      before: '10:00:00'
+    - condition: state
+      entity_id: binary_sensor.sono_detectado
+      state: 'off'
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.luz_despertar
+      data:
+        brightness_pct: 30
+        color_temp: 400
+    - delay: '00:00:30'
+    - service: script.rotina_matinal
+    - service: notify.telegram
+      data:
+        title: "🌅 Bom Dia!"
+        message: "A sua rotina matinal foi iniciada. Tenha um ótimo dia!"
+
+# Rotina matinal detalhada
+- id: 'rotina_matinal_detalhada'
+  alias: 'Rotina Matinal Detalhada'
+  trigger:
+    - platform: script
+      script_id: rotina_matinal
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.cozinha
+      data:
+        brightness_pct: 80
+        color_temp: 400
+    - service: cover.open_cover
+      target:
+        entity_id: cover.cortinas_quarto
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.sala
+      data:
+        temperature: 22
+    - service: switch.turn_on
+      entity_id: switch.cafeteira_inteligente
+    - service: tts.google_translate_say
+      entity_id: media_player.assistente_voz
+      data:
+        message: "Bom dia! Hoje está {{ states('weather.casa') }} com {{ state_attr('weather.casa', 'temperature') }} graus. Temos {{ state_attr('weather.casa', 'humidity') }} por cento de humidade. A sua agenda de hoje inclui: {{ state_attr('calendar.agenda_pessoal', 'message') }}"
+
+# ==========================================
+# AUTOMAÇÕES DE ILUMINAÇÃO INTELIGENTE
+# ==========================================
+
+# Iluminação baseada em presença
+- id: 'iluminacao_presenca_corredor'
+  alias: 'Iluminação Corredor - Presença'
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.presenca_corredor
+      to: 'on'
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.corredor
+      data:
+        brightness_pct: 70
+        color_temp: 400
+    - service: light.turn_on
+      target:
+        entity_id: light.entrada
+      data:
+        brightness_pct: 50
+
+# Desligar luzes quando ninguém está presente
+- id: 'desligar_luzes_ausencia'
+  alias: 'Desligar Luzes - Ausência'
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.presenca_corredor
+      to: 'off'
+      for:
+        minutes: 5
+    - platform: state
+      entity_id: binary_sensor.presenca_sala
+      to: 'off'
+      for:
+        minutes: 10
+  action:
+    - service: light.turn_off
+      target:
+        entity_id: light.corredor
+    - service: light.turn_off
+      target:
+        entity_id: light.sala
+      condition:
+        - condition: state
+          entity_id: binary_sensor.presenca_sala
+          state: 'off'
+
+# Iluminação noturna automática
+- id: 'iluminacao_noturna'
+  alias: 'Iluminação Noturna'
+  trigger:
+    - platform: time
+      at: '22:00:00'
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.corredor
+      data:
+        brightness_pct: 20
+        rgb_color: [255, 100, 100]  # Luz vermelha suave
+
+# ==========================================
+# CLIMATIZAÇÃO E CONFORTO
+# ==========================================
+
+# Ajuste de temperatura antes de chegar em casa
+- id: 'preparar_casa_chegada'
+  alias: 'Preparar Casa - Chegada'
+  trigger:
+    - platform: device_tracker
+      entity_id: device_tracker.telemovel
+      to: 'home'
+  action:
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.sala
+      data:
+        temperature: 22
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.quartos
+      data:
+        temperature: 20
+    - service: switch.turn_on
+      entity_id: switch.ar_condicionado_sala
+      condition:
+        - condition: numeric_state
+          entity_id: sensor.temperatura_sala
+          above: 25
+
+# Qualidade do ar - Ativar purificadores
+- id: 'qualidade_ar_purificadores'
+  alias: 'Qualidade do Ar - Purificadores'
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.qualidade_ar_sala
+      above: 80
+  action:
+    - service: fan.turn_on
+      target:
+        entity_id: fan.purificador_ar_sala
+      data:
+        speed: 'high'
+    - service: notify.telegram
+      data:
+        title: "🌬️ Qualidade do Ar"
+        message: "A qualidade do ar na sala deteriorou-se. Purificadores ativados automaticamente."
+
+# ==========================================
+# SEGURANÇA E MONITORAMENTO
+# ==========================================
+
+# Alarme de intrusão
+- id: 'alarme_intrusao'
+  alias: 'Alarme de Intrusão'
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.porta_entrada
+      to: 'on'
+      for:
+        seconds: 30
+  condition:
+    - condition: state
+      entity_id: alarm_control_panel.casa
+      state: 'armed_away'
+  action:
+    - service: camera.snapshot
+      target:
+        entity_id: camera.entrada
+      data:
+        filename: '/config/www/intrusao_{{ now().strftime("%Y%m%d_%H%M%S") }}.jpg'
+    - service: light.turn_on
+      target:
+        entity_id: light.exterior
+      data:
+        brightness_pct: 100
+        rgb_color: [255, 0, 0]  # Luz vermelha de alerta
+    - service: notify.telegram
+      data:
+        title: "🚨 ALERTA DE SEGURANÇA"
+        message: "Movimento detectado na entrada! Verificando câmeras..."
+    - service: notify.email
+      data:
+        title: "Alerta de Segurança - Casa Inteligente"
+        message: "Movimento suspeito detectado na entrada às {{ now().strftime('%H:%M:%S') }}"
+
+# Fechar janelas automaticamente na chuva
+- id: 'fechar_janelas_chuva'
+  alias: 'Fechar Janelas - Chuva'
+  trigger:
+    - platform: state
+      entity_id: weather.casa
+      attribute: condition
+      to: 'rainy'
+    - platform: numeric_state
+      entity_id: sensor.precipitacao
+      above: 1
+  condition:
+    - condition: state
+      entity_id: cover.janelas_sala
+      state: 'open'
+  action:
+    - service: cover.close_cover
+      target:
+        entity_id: cover.janelas_sala
+    - service: cover.close_cover
+      target:
+        entity_id: cover.janelas_quarto
+    - service: notify.telegram
+      data:
+        title: "🌧️ Chuva Detectada"
+        message: "As janelas foram fechadas automaticamente devido à chuva."
+
+# ==========================================
+# ENTERTAINMENT - NOITE DE CINEMA
+# ==========================================
+
+# Cena de cinema
+- id: 'noite_cinema'
+  alias: 'Noite de Cinema'
+  trigger:
+    - platform: state
+      entity_id: script.noite_cinema
+  action:
+    - service: light.turn_off
+      target:
+        entity_id: light.sala
+    - service: light.turn_on
+      target:
+        entity_id: light.luz_ambiente_sala
+      data:
+        brightness_pct: 10
+        rgb_color: [0, 0, 255]  # Luz azul ambiente
+    - service: cover.close_cover
+      target:
+        entity_id: cover.cortinas_sala
+    - service: media_player.turn_on
+      target:
+        entity_id: media_player.tv_sala
+    - service: media_player.select_source
+      target:
+        entity_id: media_player.tv_sala
+      data:
+        source: 'Netflix'
+
+# ==========================================
+# EFICIÊNCIA ENERGÉTICA
+# ==========================================
+
+# Desligar tudo quando sair de casa
+- id: 'economia_energia_sair_casa'
+  alias: 'Economia de Energia - Sair de Casa'
+  trigger:
+    - platform: device_tracker
+      entity_id: device_tracker.telemovel
+      to: 'not_home'
+  action:
+    - service: light.turn_off
+      target:
+        entity_id: all
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.sala
+      data:
+        temperature: 18
+    - service: switch.turn_off
+      target:
+        entity_id: 
+          - switch.cafeteira_inteligente
+          - switch.tostadeira
+          - switch.microondas
+    - service: notify.telegram
+      data:
+        title: "💡 Modo Economia"
+        message: "Todos os dispositivos foram desligados. Casa em modo de economia de energia."
+
+# ==========================================
+# NOTIFICAÇÕES DE MANUTENÇÃO
+# ==========================================
+
+# Lembrete de manutenção
+- id: 'lembrete_manutencao'
+  alias: 'Lembrete de Manutenção'
+  trigger:
+    - platform: time
+      at: '09:00:00'
+  action:
+    - service: notify.telegram
+      data:
+        title: "🔧 Lembrete de Manutenção"
+        message: "Verifique o status dos dispositivos: {{ states('sensor.status_dispositivos') }}"
+
+# ==========================================
+# AUTOMAÇÕES BASEADAS EM PADRÕES
+# ==========================================
+
+# Aprendizado de padrões - Iluminação
+- id: 'aprendizado_padroes_iluminacao'
+  alias: 'Aprendizado de Padrões - Iluminação'
+  trigger:
+    - platform: state
+      entity_id: light.sala
+      for:
+        minutes: 30
+  action:
+    - service: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.ultimo_uso_luz_sala
+      data:
+        timestamp: "{{ now().timestamp() }}"

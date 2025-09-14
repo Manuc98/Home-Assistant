@@ -1,0 +1,98 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./config:/config
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Lisbon
+    ports:
+      - "8123:8123"
+
+  # MQTT Broker para comunicação com dispositivos IoT
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:latest
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    environment:
+      - TZ=Europe/Lisbon
+
+  # Zigbee2MQTT para dispositivos Zigbee
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./zigbee2mqtt/data:/app/data
+      - ./zigbee2mqtt/log:/app/log
+    environment:
+      - TZ=Europe/Lisbon
+    devices:
+      - /dev/ttyUSB1:/dev/ttyUSB1
+    depends_on:
+      - mosquitto
+
+  # InfluxDB para armazenamento de dados históricos
+  influxdb:
+    container_name: influxdb
+    image: influxdb:latest
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb2
+      - ./influxdb/config:/etc/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=homeassistant123
+      - DOCKER_INFLUXDB_INIT_ORG=home
+      - DOCKER_INFLUXDB_INIT_BUCKET=home_assistant
+      - TZ=Europe/Lisbon
+
+  # Grafana para visualização de dados
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - TZ=Europe/Lisbon
+    depends_on:
+      - influxdb
+
+  # Nginx como proxy reverso
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - homeassistant
+      - grafana
+
+volumes:
+  homeassistant_data:
+  mosquitto_data:
+  zigbee2mqtt_data:
+  influxdb_data:
+  grafana_data:

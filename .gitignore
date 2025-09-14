@@ -1,0 +1,75 @@
+# Casa Inteligente - Home Assistant
+# Arquivos e diretórios a serem ignorados pelo Git
+
+# Configurações sensíveis
+config/secrets.yaml
+config/.storage/
+config/backups/
+config/ssl/
+
+# Logs
+**/log/
+**/logs/
+*.log
+
+# Dados persistentes
+**/data/
+**/persistent/
+
+# Certificados SSL
+**/ssl/
+**/*.crt
+**/*.key
+**/*.pem
+
+# Arquivos temporários
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de backup
+*.backup
+*.bak
+
+# Arquivos de configuração local
+.env
+.env.local
+.env.*.local
+
+# Arquivos específicos do Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# Arquivos específicos do macOS
+.AppleDouble
+.LSOverride
+
+# Arquivos específicos do Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Arquivos de configuração de backup
+config/configuration_backup.yaml
+config/configuration_simple.yaml
+
+# Arquivos de desenvolvimento
+dev/

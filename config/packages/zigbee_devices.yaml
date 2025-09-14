@@ -1,0 +1,397 @@
+# Configuração de Dispositivos Zigbee
+# Dispositivos Zigbee específicos e suas configurações
+
+# ==========================================
+# CONFIGURAÇÕES ZIGBEE2MQTT
+# ==========================================
+
+# Configuração do Zigbee2MQTT
+zigbee2mqtt:
+  data_path: /app/data
+  homeassistant: true
+  permit_join: false
+  mqtt:
+    base_topic: zigbee2mqtt
+    server: mqtt://mosquitto:1883
+    user: homeassistant
+    password: !secret mqtt_password
+  serial:
+    port: /dev/ttyUSB1
+    adapter: deconz
+  advanced:
+    log_level: info
+    log_output:
+      - console
+      - file
+    log_file: /app/log/zigbee2mqtt.log
+    log_rotation: true
+    log_symlink_current: false
+    log_level_debug: ''
+    log_level_info: ''
+    log_level_warn: ''
+    log_level_error: ''
+    channel: 11
+    network_key: GENERATE
+    pan_id: GENERATE
+    ext_pan_id: GENERATE
+  frontend:
+    port: 8080
+    host: 0.0.0.0
+    auth_token: !secret zigbee2mqtt_auth_token
+
+# ==========================================
+# DISPOSITIVOS ZIGBEE - LUZES
+# ==========================================
+
+# Philips Hue
+light.philips_hue_bulb_sala:
+  friendly_name: "Lâmpada Philips Hue - Sala"
+  device_class: light
+  supported_features: 17
+  zigbee_model: "LCT015"
+  zigbee_manufacturer: "Philips"
+
+light.philips_hue_bulb_cozinha:
+  friendly_name: "Lâmpada Philips Hue - Cozinha"
+  device_class: light
+  supported_features: 17
+  zigbee_model: "LCT015"
+  zigbee_manufacturer: "Philips"
+
+# Xiaomi Aqara
+light.xiaomi_aqara_bulb_quarto:
+  friendly_name: "Lâmpada Xiaomi Aqara - Quarto"
+  device_class: light
+  supported_features: 17
+  zigbee_model: "ZNLDP12LM"
+  zigbee_manufacturer: "Xiaomi"
+
+# IKEA Tradfri
+light.ikea_tradfri_bulb_corredor:
+  friendly_name: "Lâmpada IKEA Tradfri - Corredor"
+  device_class: light
+  supported_features: 17
+  zigbee_model: "LED1935C3"
+  zigbee_manufacturer: "IKEA"
+
+# ==========================================
+# DISPOSITIVOS ZIGBEE - SENSORES
+# ==========================================
+
+# Sensor de movimento Xiaomi Aqara
+binary_sensor.xiaomi_motion_sala:
+  friendly_name: "Sensor Movimento Xiaomi - Sala"
+  device_class: motion
+  zigbee_model: "RTCGQ11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+binary_sensor.xiaomi_motion_cozinha:
+  friendly_name: "Sensor Movimento Xiaomi - Cozinha"
+  device_class: motion
+  zigbee_model: "RTCGQ11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+binary_sensor.xiaomi_motion_quarto:
+  friendly_name: "Sensor Movimento Xiaomi - Quarto"
+  device_class: motion
+  zigbee_model: "RTCGQ11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+# Sensor de abertura de porta/janela
+binary_sensor.xiaomi_door_sensor_entrada:
+  friendly_name: "Sensor Porta Xiaomi - Entrada"
+  device_class: door
+  zigbee_model: "MCCGQ11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+binary_sensor.xiaomi_window_sensor_sala:
+  friendly_name: "Sensor Janela Xiaomi - Sala"
+  device_class: window
+  zigbee_model: "MCCGQ11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+# Sensor de temperatura e humidade
+sensor.xiaomi_temp_humidity_sala:
+  friendly_name: "Sensor Temp/Humidade Xiaomi - Sala"
+  device_class: temperature
+  zigbee_model: "WSDCGQ11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+sensor.xiaomi_temp_humidity_quarto:
+  friendly_name: "Sensor Temp/Humidade Xiaomi - Quarto"
+  device_class: temperature
+  zigbee_model: "WSDCGQ11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+# Sensor de qualidade do ar
+sensor.xiaomi_air_quality_sala:
+  friendly_name: "Sensor Qualidade Ar Xiaomi - Sala"
+  device_class: air_quality
+  zigbee_model: "VOCKQJK11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+# ==========================================
+# DISPOSITIVOS ZIGBEE - INTERRUPTORES
+# ==========================================
+
+# Interruptor inteligente Xiaomi Aqara
+switch.xiaomi_smart_switch_cozinha:
+  friendly_name: "Interruptor Inteligente Xiaomi - Cozinha"
+  device_class: switch
+  zigbee_model: "QBKG11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+switch.xiaomi_smart_switch_quarto:
+  friendly_name: "Interruptor Inteligente Xiaomi - Quarto"
+  device_class: switch
+  zigbee_model: "QBKG11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+# Botão inteligente
+binary_sensor.xiaomi_button_sala:
+  friendly_name: "Botão Inteligente Xiaomi - Sala"
+  device_class: button
+  zigbee_model: "WXKG11LM"
+  zigbee_manufacturer: "Xiaomi"
+
+# ==========================================
+# DISPOSITIVOS ZIGBEE - RELÉS
+# ==========================================
+
+# Relé inteligente Sonoff
+switch.sonoff_relay_garagem:
+  friendly_name: "Relé Sonoff - Garagem"
+  device_class: switch
+  zigbee_model: "BASICZBR3"
+  zigbee_manufacturer: "SONOFF"
+
+switch.sonoff_relay_quintal:
+  friendly_name: "Relé Sonoff - Quintal"
+  device_class: switch
+  zigbee_model: "BASICZBR3"
+  zigbee_manufacturer: "SONOFF"
+
+# ==========================================
+# DISPOSITIVOS ZIGBEE - CÂMERAS
+# ==========================================
+
+# Câmera inteligente Xiaomi
+camera.xiaomi_camera_entrada:
+  friendly_name: "Câmera Xiaomi - Entrada"
+  device_class: camera
+  zigbee_model: "ZNSXJ12LM"
+  zigbee_manufacturer: "Xiaomi"
+
+camera.xiaomi_camera_quintal:
+  friendly_name: "Câmera Xiaomi - Quintal"
+  device_class: camera
+  zigbee_model: "ZNSXJ12LM"
+  zigbee_manufacturer: "Xiaomi"
+
+# ==========================================
+# DISPOSITIVOS ZIGBEE - VENTILADORES
+# ==========================================
+
+# Ventilador inteligente
+fan.xiaomi_fan_sala:
+  friendly_name: "Ventilador Xiaomi - Sala"
+  device_class: fan
+  zigbee_model: "DMaker.fan.p15"
+  zigbee_manufacturer: "Xiaomi"
+
+# Purificador de ar
+fan.xiaomi_air_purifier_sala:
+  friendly_name: "Purificador Ar Xiaomi - Sala"
+  device_class: fan
+  zigbee_model: "zhimi.airpurifier.ma2"
+  zigbee_manufacturer: "Xiaomi"
+
+# ==========================================
+# DISPOSITIVOS ZIGBEE - TERMOSTATOS
+# ==========================================
+
+# Termostato inteligente
+climate.xiaomi_thermostat_sala:
+  friendly_name: "Termostato Xiaomi - Sala"
+  device_class: climate
+  zigbee_model: "KTWKQ03ES"
+  zigbee_manufacturer: "Xiaomi"
+
+# ==========================================
+# CONFIGURAÇÕES DE AUTOMAÇÃO ZIGBEE
+# ==========================================
+
+# Automação para dispositivos Zigbee
+automation:
+  # Configurar novos dispositivos Zigbee automaticamente
+  - id: 'zigbee_device_joined'
+    alias: 'Dispositivo Zigbee Adicionado'
+    trigger:
+      - platform: event
+        event_type: device_registry_updated
+        event_data:
+          action: create
+    condition:
+      - condition: template
+        value_template: >
+          {{ trigger.event.data.entity_id.startswith('light.') or
+             trigger.event.data.entity_id.startswith('binary_sensor.') or
+             trigger.event.data.entity_id.startswith('sensor.') }}
+    action:
+      - service: notify.telegram
+        data:
+          title: "🔗 Novo Dispositivo Zigbee"
+          message: >
+            Novo dispositivo Zigbee adicionado:
+            {{ trigger.event.data.entity_id }}
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.comando_voz_customizado
+        data:
+          value: "Novo dispositivo Zigbee configurado automaticamente"
+
+  # Monitoramento de dispositivos Zigbee offline
+  - id: 'zigbee_device_offline'
+    alias: 'Dispositivo Zigbee Offline'
+    trigger:
+      - platform: state
+        entity_id: 
+          - light.philips_hue_bulb_sala
+          - light.xiaomi_aqara_bulb_quarto
+          - binary_sensor.xiaomi_motion_sala
+          - sensor.xiaomi_temp_humidity_sala
+        to: 'unavailable'
+        for:
+          minutes: 5
+    action:
+      - service: notify.telegram
+        data:
+          title: "⚠️ Dispositivo Zigbee Offline"
+          message: >
+            Dispositivo Zigbee offline:
+            {{ trigger.entity_id }}
+      - service: notify.email
+        data:
+          title: "Dispositivo Zigbee Offline - Casa Inteligente"
+          message: >
+            O dispositivo {{ trigger.entity_id }} está offline há mais de 5 minutos.
+            Verifique a conectividade e a bateria do dispositivo.
+
+# ==========================================
+# SCRIPT PARA CONFIGURAÇÃO ZIGBEE
+# ==========================================
+
+script:
+  # Script para permitir junção de novos dispositivos
+  permitir_juncao_zigbee:
+    alias: "Permitir Junção de Dispositivos Zigbee"
+    sequence:
+      - service: mqtt.publish
+        topic: "zigbee2mqtt/bridge/config/permit_join"
+        payload: "true"
+      - service: notify.telegram
+        data:
+          title: "🔗 Zigbee - Modo Junção Ativado"
+          message: "Modo de junção ativado por 5 minutos. Adicione seus dispositivos Zigbee agora."
+      - delay: '00:05:00'
+      - service: mqtt.publish
+        topic: "zigbee2mqtt/bridge/config/permit_join"
+        payload: "false"
+      - service: notify.telegram
+        data:
+          title: "🔒 Zigbee - Modo Junção Desativado"
+          message: "Modo de junção desativado automaticamente."
+
+  # Script para reiniciar Zigbee2MQTT
+  reiniciar_zigbee2mqtt:
+    alias: "Reiniciar Zigbee2MQTT"
+    sequence:
+      - service: notify.telegram
+        data:
+          title: "🔄 Zigbee2MQTT"
+          message: "Reiniciando Zigbee2MQTT..."
+      - service: mqtt.publish
+        topic: "zigbee2mqtt/bridge/config/restart"
+        payload: "true"
+      - delay: '00:00:30'
+      - service: notify.telegram
+        data:
+          title: "✅ Zigbee2MQTT"
+          message: "Zigbee2MQTT reiniciado com sucesso."
+
+# ==========================================
+# SENSORES DE MONITORAMENTO ZIGBEE
+# ==========================================
+
+sensor:
+  # Contagem de dispositivos Zigbee
+  - platform: template
+    sensors:
+      dispositivos_zigbee_total:
+        friendly_name: "Total Dispositivos Zigbee"
+        unit_of_measurement: "dispositivos"
+        value_template: >
+          {% set count = 0 %}
+          {% for entity_id in states %}
+            {% if entity_id.startswith('light.') or 
+                  entity_id.startswith('binary_sensor.') or 
+                  entity_id.startswith('sensor.') %}
+              {% if 'zigbee' in state_attr(entity_id, 'device_info', {}).get('manufacturer', '') %}
+                {% set count = count + 1 %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {{ count }}
+        icon_template: mdi:zigbee
+
+      dispositivos_zigbee_online:
+        friendly_name: "Dispositivos Zigbee Online"
+        unit_of_measurement: "dispositivos"
+        value_template: >
+          {% set count = 0 %}
+          {% for entity_id in states %}
+            {% if entity_id.startswith('light.') or 
+                  entity_id.startswith('binary_sensor.') or 
+                  entity_id.startswith('sensor.') %}
+              {% if 'zigbee' in state_attr(entity_id, 'device_info', {}).get('manufacturer', '') %}
+                {% if states(entity_id) != 'unavailable' %}
+                  {% set count = count + 1 %}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {{ count }}
+        icon_template: mdi:zigbee
+
+# ==========================================
+# CONFIGURAÇÕES DE REDE ZIGBEE
+# ==========================================
+
+# Configurações específicas da rede Zigbee
+input_number:
+  canal_zigbee:
+    name: "Canal Zigbee"
+    min: 11
+    max: 26
+    step: 1
+    initial: 11
+    icon: mdi:zigbee
+
+  potencia_transmissao_zigbee:
+    name: "Potência Transmissão Zigbee"
+    min: 0
+    max: 20
+    step: 1
+    initial: 5
+    unit_of_measurement: "dBm"
+    icon: mdi:transmission-tower
+
+input_select:
+  modo_rede_zigbee:
+    name: "Modo Rede Zigbee"
+    options:
+      - "Estável"
+      - "Otimizada"
+      - "Desenvolvimento"
+    initial: "Estável"
+    icon: mdi:zigbee

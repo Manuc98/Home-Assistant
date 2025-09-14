@@ -1,0 +1,81 @@
+# Configuração Simples do Home Assistant para Teste
+
+# Configurações básicas
+default_config:
+
+# Informações básicas da casa
+homeassistant:
+  name: Casa Inteligente
+  latitude: 38.7223
+  longitude: -9.1393
+  elevation: 10
+  unit_system: metric
+  time_zone: Europe/Lisbon
+  country: PT
+  language: pt
+
+# Interface web
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+    - 172.16.0.0/12
+
+# Sistema de grupos para organização
+group:
+  # Grupo de luzes principais
+  luzes_principais:
+    name: "Luzes Principais"
+    entities:
+      - light.sala
+      - light.cozinha
+      - light.quartos
+      
+  # Grupo de climatização
+  climatizacao:
+    name: "Climatização"
+    entities:
+      - climate.sala
+      - climate.quartos
+      - fan.purificador_ar
+      
+  # Grupo de segurança
+  seguranca:
+    name: "Segurança"
+    entities:
+      - alarm_control_panel.casa
+      - camera.entrada
+      - camera.quintal
+      - binary_sensor.porta_entrada
+      - binary_sensor.janelas
+      
+  # Grupo de entretenimento
+  entretenimento:
+    name: "Entretenimento"
+    entities:
+      - media_player.sala
+      - media_player.cozinha
+      - media_player.quartos
+
+# Configurações de histórico
+recorder:
+  purge_keep_days: 30
+  exclude:
+    entities:
+      - sun.sun
+      - weather.home
+    domains:
+      - automation
+      - script
+
+# Configurações de logbook
+logbook:
+  exclude:
+    entities:
+      - sun.sun
+      - weather.home
+
+# Configurações de mapa
+map:
+  default_zoom: 10

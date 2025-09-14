@@ -1,0 +1,458 @@
+# Controle por Voz da Casa Inteligente
+# Integração com assistentes de voz e reconhecimento
+
+# ==========================================
+# INTEGRAÇÃO COM GOOGLE ASSISTANT
+# ==========================================
+
+google_assistant:
+  project_id: !secret google_project_id
+  service_account: !load_secret: google_service_account.json
+  report_state: true
+  report_immediately: true
+  use_local_sdk: true
+  entity_config:
+    light.sala:
+      name: "Luz da Sala"
+      aliases:
+        - "luz sala"
+        - "luzes da sala"
+        - "iluminação da sala"
+    light.cozinha:
+      name: "Luz da Cozinha"
+      aliases:
+        - "luz cozinha"
+        - "luzes da cozinha"
+    light.quarto_principal:
+      name: "Luz do Quarto"
+      aliases:
+        - "luz quarto"
+        - "luzes do quarto"
+    climate.sala:
+      name: "Ar Condicionado da Sala"
+      aliases:
+        - "temperatura da sala"
+        - "clima da sala"
+        - "ar condicionado"
+    media_player.tv_sala:
+      name: "TV da Sala"
+      aliases:
+        - "televisão"
+        - "tv"
+        - "televisão da sala"
+
+# ==========================================
+# INTEGRAÇÃO COM ALEXA
+# ==========================================
+
+alexa:
+  smart_home:
+    endpoint: https://api.amazonalexa.com/v3/events
+    client_id: !secret alexa_client_id
+    client_secret: !secret alexa_client_secret
+    filter:
+      include_entities:
+        - light.sala
+        - light.cozinha
+        - light.quarto_principal
+        - climate.sala
+        - media_player.tv_sala
+        - media_player.sistema_som
+        - switch.cafeteira_inteligente
+        - fan.purificador_ar_sala
+        - cover.cortinas_sala
+        - alarm_control_panel.casa
+
+# ==========================================
+# CONVERSATION - ASSISTENTE INTELIGENTE
+# ==========================================
+
+conversation:
+  intents:
+    BomDia:
+      - "bom dia"
+      - "boa manhã"
+      - "acordar"
+      - "iniciar o dia"
+      - "rotina matinal"
+      
+    NoiteCinema:
+      - "noite de cinema"
+      - "modo cinema"
+      - "assistir filme"
+      - "preparar cinema"
+      - "cenário de cinema"
+      
+    ModoSono:
+      - "hora de dormir"
+      - "modo sono"
+      - "vou dormir"
+      - "preparar para dormir"
+      - "boa noite"
+      
+    StatusCasa:
+      - "status da casa"
+      - "como está a casa"
+      - "situação da casa"
+      - "relatório da casa"
+      - "estado dos dispositivos"
+      
+    EconomiaEnergia:
+      - "economizar energia"
+      - "modo economia"
+      - "desligar tudo"
+      - "poupar energia"
+      - "eficiente"
+
+# ==========================================
+# INTENT HANDLERS
+# ==========================================
+
+intent_script:
+  BomDia:
+    action:
+      - service: script.rotina_matinal
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Bom dia! A sua rotina matinal foi iniciada. Tenha um excelente dia!"
+      - service: notify.telegram
+        data:
+          title: "🌅 Bom Dia!"
+          message: "Rotina matinal ativada por comando de voz às {{ now().strftime('%H:%M') }}"
+
+  NoiteCinema:
+    action:
+      - service: script.noite_cinema
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Cenário de cinema ativado! Aproveite o filme!"
+
+  ModoSono:
+    action:
+      - service: script.modo_sono
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Modo sono ativado. Boa noite e durma bem!"
+
+  StatusCasa:
+    action:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: >
+            Status da casa: Temperatura {{ states('sensor.temperatura_sala') }} graus,
+            Qualidade do ar {{ states('sensor.status_qualidade_ar') }},
+            Consumo de energia {{ states('sensor.consumo_energia_total') }} kWh,
+            Segurança {{ states('sensor.status_seguranca') }}.
+
+  EconomiaEnergia:
+    action:
+      - service: script.economia_energia
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Modo de economia de energia ativado. Todos os dispositivos desnecessários foram desligados."
+
+# ==========================================
+# TEXT-TO-SPEECH CONFIGURATION
+# ==========================================
+
+tts:
+  - platform: google_translate
+    service_name: google_translate_say
+    language: pt
+    gender: female
+    voice: pt-BR-Standard-A
+
+  - platform: amazon_polly
+    aws_access_key_id: !secret aws_access_key_id
+    aws_secret_access_key: !secret aws_secret_access_key
+    region_name: eu-west-1
+    voice: Camila
+    language: pt-BR
+
+# ==========================================
+# SPEECH-TO-TEXT CONFIGURATION
+# ==========================================
+
+stt:
+  - platform: google_cloud
+    api_key: !secret google_stt_api_key
+    language: pt-BR
+    encoding: LINEAR16
+    sample_rate: 16000
+
+# ==========================================
+# VOICE COMMANDS CUSTOMIZATION
+# ==========================================
+
+input_text:
+  comando_voz_customizado:
+    name: "Comando de Voz Customizado"
+    initial: ""
+    min: 0
+    max: 100
+
+input_select:
+  idioma_assistente:
+    name: "Idioma do Assistente"
+    options:
+      - "pt-PT"
+      - "pt-BR"
+      - "en-US"
+      - "es-ES"
+    initial: "pt-PT"
+    icon: mdi:translate
+
+input_boolean:
+  ativar_reconhecimento_voz:
+    name: "Ativar Reconhecimento de Voz"
+    initial: true
+    icon: mdi:microphone
+
+  ativar_sintese_voz:
+    name: "Ativar Síntese de Voz"
+    initial: true
+    icon: mdi:speaker
+
+  modo_privacidade_voz:
+    name: "Modo Privacidade Voz"
+    initial: false
+    icon: mdi:shield-account
+
+# ==========================================
+# AUTOMAÇÕES DE VOZ
+# ==========================================
+
+automation:
+  # Resposta automática a comandos de voz
+  - id: 'resposta_comando_voz'
+    alias: 'Resposta a Comando de Voz'
+    trigger:
+      - platform: state
+        entity_id: input_text.comando_voz_customizado
+    condition:
+      - condition: template
+        value_template: "{{ trigger.to_state.state != '' }}"
+    action:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Comando recebido: {{ trigger.to_state.state }}"
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.comando_voz_customizado
+        data:
+          value: ""
+
+  # Ativação por palavra-chave
+  - id: 'ativacao_palavra_chave'
+    alias: 'Ativação por Palavra-Chave'
+    trigger:
+      - platform: state
+        entity_id: input_text.comando_voz_customizado
+    condition:
+      - condition: template
+        value_template: >
+          {% set comando = trigger.to_state.state.lower() %}
+          {% set palavras_chave = ['assistente', 'casa', 'ajuda', 'hey home'] %}
+          {{ comando in palavras_chave }}
+    action:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Olá! Estou aqui para ajudar. O que posso fazer por si?"
+
+# ==========================================
+# SCRIPTS DE VOZ AVANÇADOS
+# ==========================================
+
+script:
+  # Script de diagnóstico por voz
+  diagnostico_voz:
+    alias: "Diagnóstico por Voz"
+    sequence:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Iniciando diagnóstico da casa..."
+      - delay: '00:00:02'
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: >
+            Diagnóstico completo: {{ states('sensor.dispositivos_online') }} de 
+            {{ states('sensor.total_dispositivos') }} dispositivos online. 
+            Temperatura média {{ states('sensor.temperatura_sala') }} graus. 
+            Consumo atual {{ states('sensor.consumo_energia_total') }} kWh.
+
+  # Script de notícias matinais
+  noticias_matinais:
+    alias: "Notícias Matinais"
+    sequence:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Bom dia! Aqui estão as suas informações do dia:"
+      - delay: '00:00:02'
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: >
+            Hoje está {{ states('weather.casa') }} com 
+            {{ state_attr('weather.casa', 'temperature') }} graus. 
+            A sua agenda inclui {{ state_attr('calendar.agenda_pessoal', 'message') }}.
+      - delay: '00:00:03'
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Consumo de energia ontem: {{ states('sensor.consumo_energia_total') }} kWh."
+
+  # Script de emergência por voz
+  emergencia_voz:
+    alias: "Emergência por Voz"
+    sequence:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "ALERTA DE EMERGÊNCIA ATIVADO!"
+      - service: script.emergencia
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Todos os sistemas de emergência foram ativados. Verifique a casa imediatamente!"
+
+# ==========================================
+# CONFIGURAÇÕES DE PRIVACIDADE E SEGURANÇA
+# ==========================================
+
+input_boolean:
+  gravar_comandos_voz:
+    name: "Gravar Comandos de Voz"
+    initial: false
+    icon: mdi:record-rec
+
+  compartilhar_dados_voz:
+    name: "Compartilhar Dados de Voz"
+    initial: false
+    icon: mdi:share-variant
+
+# Sensor de atividade de voz
+sensor:
+  - platform: template
+    sensors:
+      comandos_voz_hoje:
+        friendly_name: "Comandos de Voz Hoje"
+        unit_of_measurement: "comandos"
+        value_template: >
+          {% set count = state_attr('input_text.comando_voz_customizado', 'count') | int(0) %}
+          {{ count }}
+        icon_template: mdi:microphone
+
+# ==========================================
+# INTEGRAÇÃO COM DISPOSITIVOS ESPECÍFICOS
+# ==========================================
+
+# Configuração para Google Home
+media_player:
+  - platform: cast
+    name: "Google Home Sala"
+    host: 192.168.1.50
+    
+  - platform: cast
+    name: "Google Home Cozinha"
+    host: 192.168.1.51
+
+# Configuração para Amazon Echo
+alexa:
+  smart_home:
+    filter:
+      include_domains:
+        - light
+        - switch
+        - media_player
+        - climate
+        - fan
+        - cover
+        - alarm_control_panel
+
+# ==========================================
+# PERSONALIZAÇÃO DE VOZ
+# ==========================================
+
+input_select:
+  voz_assistente:
+    name: "Voz do Assistente"
+    options:
+      - "Feminina Suave"
+      - "Masculina Profunda"
+      - "Feminina Alegre"
+      - "Masculina Neutra"
+    initial: "Feminina Suave"
+    icon: mdi:account-voice
+
+input_number:
+  velocidade_fala:
+    name: "Velocidade da Fala"
+    min: 0.5
+    max: 2.0
+    step: 0.1
+    initial: 1.0
+    unit_of_measurement: "x"
+
+  volume_assistente:
+    name: "Volume do Assistente"
+    min: 0
+    max: 100
+    step: 5
+    initial: 70
+    unit_of_measurement: "%"
+
+# ==========================================
+# COMANDOS DE VOZ PERSONALIZADOS
+# ==========================================
+
+input_text:
+  comando_personalizado_1:
+    name: "Comando Personalizado 1"
+    initial: ""
+
+  comando_personalizado_2:
+    name: "Comando Personalizado 2"
+    initial: ""
+
+  comando_personalizado_3:
+    name: "Comando Personalizado 3"
+    initial: ""
+
+# Scripts para comandos personalizados
+script:
+  executar_comando_personalizado_1:
+    alias: "Executar Comando Personalizado 1"
+    sequence:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Executando comando personalizado 1"
+      # Adicionar ações específicas aqui
+
+  executar_comando_personalizado_2:
+    alias: "Executar Comando Personalizado 2"
+    sequence:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Executando comando personalizado 2"
+      # Adicionar ações específicas aqui
+
+  executar_comando_personalizado_3:
+    alias: "Executar Comando Personalizado 3"
+    sequence:
+      - service: tts.google_translate_say
+        entity_id: media_player.assistente_voz
+        data:
+          message: "Executando comando personalizado 3"
+      # Adicionar ações específicas aqui

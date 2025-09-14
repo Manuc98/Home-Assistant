@@ -1,0 +1,318 @@
+# Scripts da Casa Inteligente
+# Automações Complexas e Sequências
+
+# ==========================================
+# SCRIPT PRINCIPAL - ROTINA MATINAL
+# ==========================================
+
+rotina_matinal:
+  alias: "Rotina Matinal Completa"
+  description: "Executa a rotina matinal completa da casa"
+  sequence:
+    - service: light.turn_on
+      target:
+        entity_id: light.quarto_principal
+      data:
+        brightness_pct: 60
+        color_temp: 400
+    - delay: '00:00:10'
+    - service: cover.open_cover
+      target:
+        entity_id: cover.cortinas_quarto
+    - delay: '00:00:05'
+    - service: light.turn_on
+      target:
+        entity_id: light.cozinha
+      data:
+        brightness_pct: 80
+        color_temp: 500
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.sala
+      data:
+        temperature: 22
+    - service: switch.turn_on
+      entity_id: switch.cafeteira_inteligente
+    - service: tts.google_translate_say
+      entity_id: media_player.assistente_voz
+      data:
+        message: "Bom dia! A sua rotina matinal foi iniciada."
+    - service: notify.telegram
+      data:
+        title: "🌅 Bom Dia!"
+        message: "Rotina matinal iniciada às {{ now().strftime('%H:%M') }}"
+
+# ==========================================
+# SCRIPT - NOITE DE CINEMA
+# ==========================================
+
+noite_cinema:
+  alias: "Noite de Cinema"
+  description: "Prepara a sala para uma noite de cinema"
+  sequence:
+    - service: light.turn_off
+      target:
+        entity_id: light.sala
+    - service: light.turn_on
+      target:
+        entity_id: light.luz_ambiente_sala
+      data:
+        brightness_pct: 15
+        rgb_color: [0, 50, 100]
+    - service: cover.close_cover
+      target:
+        entity_id: cover.cortinas_sala
+    - service: media_player.turn_on
+      target:
+        entity_id: media_player.tv_sala
+    - service: media_player.select_source
+      target:
+        entity_id: media_player.tv_sala
+      data:
+        source: 'Netflix'
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.sala
+      data:
+        temperature: 21
+    - service: tts.google_translate_say
+      entity_id: media_player.assistente_voz
+      data:
+        message: "Cenário de cinema ativado. Aproveite o filme!"
+
+# ==========================================
+# SCRIPT - MODO SONO
+# ==========================================
+
+modo_sono:
+  alias: "Modo Sono"
+  description: "Prepara a casa para o sono"
+  sequence:
+    - service: light.turn_off
+      target:
+        entity_id: 
+          - light.sala
+          - light.cozinha
+          - light.corredor
+    - service: light.turn_on
+      target:
+        entity_id: light.quarto_principal
+      data:
+        brightness_pct: 20
+        rgb_color: [255, 100, 100]
+    - service: cover.close_cover
+      target:
+        entity_id: cover.cortinas_quarto
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.quarto_principal
+      data:
+        temperature: 19
+    - service: alarm_control_panel.alarm_arm_away
+      target:
+        entity_id: alarm_control_panel.casa
+    - service: switch.turn_off
+      target:
+        entity_id: 
+          - switch.tv_sala
+          - switch.cafeteira_inteligente
+          - switch.microondas
+    - service: tts.google_translate_say
+      entity_id: media_player.assistente_voz
+      data:
+        message: "Modo sono ativado. Boa noite!"
+
+# ==========================================
+# SCRIPT - CHEGADA EM CASA
+# ==========================================
+
+chegada_casa:
+  alias: "Chegada em Casa"
+  description: "Prepara a casa quando alguém chega"
+  sequence:
+    - service: light.turn_on
+      target:
+        entity_id: light.entrada
+      data:
+        brightness_pct: 70
+        color_temp: 400
+    - service: light.turn_on
+      target:
+        entity_id: light.corredor
+      data:
+        brightness_pct: 50
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.sala
+      data:
+        temperature: 22
+    - service: alarm_control_panel.alarm_disarm
+      target:
+        entity_id: alarm_control_panel.casa
+      data:
+        code: !secret alarm_code
+    - service: tts.google_translate_say
+      entity_id: media_player.assistente_voz
+      data:
+        message: "Bem-vindo de volta! A casa foi preparada para a sua chegada."
+
+# ==========================================
+# SCRIPT - SEGURANÇA MÁXIMA
+# ==========================================
+
+seguranca_maxima:
+  alias: "Segurança Máxima"
+  description: "Ativa todas as medidas de segurança"
+  sequence:
+    - service: alarm_control_panel.alarm_arm_away
+      target:
+        entity_id: alarm_control_panel.casa
+    - service: camera.enable_motion_detection
+      target:
+        entity_id: 
+          - camera.entrada
+          - camera.quintal
+          - camera.garagem
+    - service: light.turn_on
+      target:
+        entity_id: light.exterior
+      data:
+        brightness_pct: 100
+        rgb_color: [255, 255, 0]  # Luz amarela de alerta
+    - service: notify.telegram
+      data:
+        title: "🔒 Segurança Máxima Ativada"
+        message: "Todas as medidas de segurança foram ativadas às {{ now().strftime('%H:%M') }}"
+
+# ==========================================
+# SCRIPT - ECONOMIA DE ENERGIA
+# ==========================================
+
+economia_energia:
+  alias: "Economia de Energia"
+  description: "Desliga todos os dispositivos desnecessários"
+  sequence:
+    - service: light.turn_off
+      target:
+        entity_id: all
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.sala
+      data:
+        temperature: 18
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.quartos
+      data:
+        temperature: 16
+    - service: switch.turn_off
+      target:
+        entity_id: 
+          - switch.cafeteira_inteligente
+          - switch.tostadeira
+          - switch.microondas
+          - switch.tv_sala
+          - switch.computador
+    - service: fan.turn_off
+      target:
+        entity_id: fan.purificador_ar_sala
+    - service: notify.telegram
+      data:
+        title: "💡 Modo Economia Ativado"
+        message: "Todos os dispositivos foram desligados para economia de energia."
+
+# ==========================================
+# SCRIPT - MANUTENÇÃO SISTEMA
+# ==========================================
+
+manutencao_sistema:
+  alias: "Manutenção do Sistema"
+  description: "Executa verificações de manutenção"
+  sequence:
+    - service: system_log.clear
+    - service: notify.telegram
+      data:
+        title: "🔧 Relatório de Manutenção"
+        message: |
+          Status do Sistema:
+          - Home Assistant: {{ states('sensor.uptime') }}
+          - Dispositivos Online: {{ states('sensor.dispositivos_online') }}/{{ states('sensor.total_dispositivos') }}
+          - Temperatura Casa: {{ states('sensor.temperatura_sala') }}°C
+          - Qualidade do Ar: {{ states('sensor.qualidade_ar_sala') }}
+          - Consumo Energia: {{ states('sensor.consumo_energia_total') }} kWh
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.manutencao_concluida
+    - service: tts.google_translate_say
+      entity_id: media_player.assistente_voz
+      data:
+        message: "Relatório de manutenção do sistema concluído."
+
+# ==========================================
+# SCRIPT - MODO FESTA
+# ==========================================
+
+modo_festa:
+  alias: "Modo Festa"
+  description: "Prepara a casa para uma festa"
+  sequence:
+    - service: light.turn_on
+      target:
+        entity_id: 
+          - light.sala
+          - light.cozinha
+          - light.corredor
+      data:
+        brightness_pct: 80
+        rgb_color: [255, 100, 255]  # Luz roxa festiva
+    - service: media_player.turn_on
+      target:
+        entity_id: media_player.sistema_som
+    - service: media_player.select_source
+      target:
+        entity_id: media_player.sistema_som
+      data:
+        source: 'Spotify'
+    - service: climate.set_temperature
+      target:
+        entity_id: climate.sala
+      data:
+        temperature: 20
+    - service: fan.turn_on
+      target:
+        entity_id: fan.purificador_ar_sala
+      data:
+        speed: 'high'
+    - service: tts.google_translate_say
+      entity_id: media_player.assistente_voz
+      data:
+        message: "Modo festa ativado! Que a diversão comece!"
+
+# ==========================================
+# SCRIPT - EMERGÊNCIA
+# ==========================================
+
+emergencia:
+  alias: "Modo de Emergência"
+  description: "Ativa modo de emergência"
+  sequence:
+    - service: light.turn_on
+      target:
+        entity_id: all
+      data:
+        brightness_pct: 100
+        rgb_color: [255, 0, 0]  # Luz vermelha de emergência
+    - service: alarm_control_panel.alarm_trigger
+      target:
+        entity_id: alarm_control_panel.casa
+    - service: notify.telegram
+      data:
+        title: "🚨 EMERGÊNCIA DETECTADA"
+        message: "Modo de emergência ativado às {{ now().strftime('%H:%M:%S') }}"
+    - service: notify.email
+      data:
+        title: "ALERTA DE EMERGÊNCIA - Casa Inteligente"
+        message: "Modo de emergência ativado. Verifique imediatamente."
+    - service: tts.google_translate_say
+      entity_id: media_player.assistente_voz
+      data:
+        message: "Alerta de emergência! Verifique a casa imediatamente!"

@@ -1,0 +1,85 @@
+# Docker Compose para Produção
+# Configurações otimizadas para ambiente de produção
+
+services:
+  homeassistant:
+    # Configurações de produção
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Lisbon
+    volumes:
+      - ./config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    # Remover portas expostas em produção (usar nginx)
+    # ports:
+    #   - "8123:8123"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+
+  mosquitto:
+    restart: unless-stopped
+    # Remover portas expostas em produção
+    # ports:
+    #   - "1883:1883"
+    #   - "9001:9001"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+
+  grafana:
+    restart: unless-stopped
+    # Remover portas expostas em produção
+    # ports:
+    #   - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
+      - GF_SECURITY_SECRET_KEY=${GRAFANA_SECRET_KEY}
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  influxdb:
+    restart: unless-stopped
+    # Remover portas expostas em produção
+    # ports:
+    #   - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD:-homeassistant123}
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+
+  nginx:
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+
+  zigbee2mqtt:
+    restart: unless-stopped
+    # Remover portas expostas em produção
+    # ports:
+    #   - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'

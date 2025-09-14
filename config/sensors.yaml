@@ -1,0 +1,386 @@
+# Sensores da Casa Inteligente
+# Monitoramento e medições em tempo real
+
+# ==========================================
+# SENSORES DE ENERGIA E SUSTENTABILIDADE
+# ==========================================
+
+# Consumo total de energia
+- platform: template
+  sensors:
+    consumo_energia_total:
+      friendly_name: "Consumo Total de Energia"
+      unit_of_measurement: "kWh"
+      value_template: >
+        {% set total = 0 %}
+        {% for entity_id in [
+            'sensor.consumo_ar_condicionado',
+            'sensor.consumo_cafeteira',
+            'sensor.consumo_tv',
+            'sensor.consumo_luzes',
+            'sensor.consumo_eletrodomesticos'
+        ] %}
+          {% set value = states(entity_id) | float(0) %}
+          {% set total = total + value %}
+        {% endfor %}
+        {{ total | round(2) }}
+      icon_template: mdi:lightning-bolt
+
+# Custo diário de energia
+- platform: template
+  sensors:
+    custo_energia_diario:
+      friendly_name: "Custo Diário de Energia"
+      unit_of_measurement: "€"
+      value_template: >
+        {% set consumo = states('sensor.consumo_energia_total') | float(0) %}
+        {% set preco_kwh = 0.25 %}
+        {{ (consumo * preco_kwh) | round(2) }}
+      icon_template: mdi:currency-eur
+
+# Eficiência energética da casa
+- platform: template
+  sensors:
+    eficiencia_energetica:
+      friendly_name: "Eficiência Energética"
+      unit_of_measurement: "%"
+      value_template: >
+        {% set consumo = states('sensor.consumo_energia_total') | float(0) %}
+        {% set max_consumo = 50.0 %}
+        {% set eficiencia = ((max_consumo - consumo) / max_consumo * 100) | round(1) %}
+        {% if eficiencia < 0 %}0{% else %}{{ eficiencia }}{% endif %}
+      icon_template: mdi:leaf
+
+# ==========================================
+# SENSORES DE QUALIDADE DO AR
+# ==========================================
+
+# Qualidade do ar geral da casa
+- platform: template
+  sensors:
+    qualidade_ar_casa:
+      friendly_name: "Qualidade do Ar - Casa"
+      unit_of_measurement: "IAQ"
+      value_template: >
+        {% set sala = states('sensor.qualidade_ar_sala') | float(0) %}
+        {% set quarto = states('sensor.qualidade_ar_quarto') | float(0) %}
+        {% set cozinha = states('sensor.qualidade_ar_cozinha') | float(0) %}
+        {% set media = (sala + quarto + cozinha) / 3 %}
+        {{ media | round(0) }}
+      icon_template: mdi:air-filter
+
+# Status da qualidade do ar
+- platform: template
+  sensors:
+    status_qualidade_ar:
+      friendly_name: "Status Qualidade do Ar"
+      value_template: >
+        {% set qualidade = states('sensor.qualidade_ar_casa') | float(0) %}
+        {% if qualidade < 50 %}
+          Excelente
+        {% elif qualidade < 100 %}
+          Boa
+        {% elif qualidade < 150 %}
+          Moderada
+        {% elif qualidade < 200 %}
+          Insalubre
+        {% else %}
+          Perigosa
+        {% endif %}
+      icon_template: mdi:air-filter
+
+# ==========================================
+# SENSORES DE CONFORTO
+# ==========================================
+
+# Conforto térmico geral
+- platform: template
+  sensors:
+    conforto_termico:
+      friendly_name: "Conforto Térmico"
+      value_template: >
+        {% set temp_sala = states('sensor.temperatura_sala') | float(0) %}
+        {% set humidade_sala = states('sensor.humidade_sala') | float(0) %}
+        {% if temp_sala >= 20 and temp_sala <= 24 and humidade_sala >= 30 and humidade_sala <= 60 %}
+          Confortável
+        {% elif temp_sala < 20 or temp_sala > 24 %}
+          Temperatura fora do ideal
+        {% else %}
+          Humidade fora do ideal
+        {% endif %}
+      icon_template: mdi:thermometer
+
+# Índice de conforto geral da casa
+- platform: template
+  sensors:
+    indice_conforto_casa:
+      friendly_name: "Índice de Conforto da Casa"
+      unit_of_measurement: "%"
+      value_template: >
+        {% set conforto = 100 %}
+        
+        {# Penalizar temperatura inadequada #}
+        {% set temp = states('sensor.temperatura_sala') | float(22) %}
+        {% if temp < 20 or temp > 24 %}
+          {% set conforto = conforto - 20 %}
+        {% endif %}
+        
+        {# Penalizar humidade inadequada #}
+        {% set humidade = states('sensor.humidade_sala') | float(50) %}
+        {% if humidade < 30 or humidade > 60 %}
+          {% set conforto = conforto - 15 %}
+        {% endif %}
+        
+        {# Penalizar qualidade do ar ruim #}
+        {% set qualidade_ar = states('sensor.qualidade_ar_casa') | float(50) %}
+        {% if qualidade_ar > 100 %}
+          {% set conforto = conforto - 25 %}
+        {% endif %}
+        
+        {% if conforto < 0 %}0{% else %}{{ conforto }}{% endif %}
+      icon_template: mdi:home-thermometer
+
+# ==========================================
+# SENSORES DE SEGURANÇA
+# ==========================================
+
+# Status geral de segurança
+- platform: template
+  sensors:
+    status_seguranca:
+      friendly_name: "Status de Segurança"
+      value_template: >
+        {% set alarme = states('alarm_control_panel.casa') %}
+        {% set porta = states('binary_sensor.porta_entrada') %}
+        {% set janelas = states('binary_sensor.janelas_sala') %}
+        
+        {% if alarme == 'disarmed' %}
+          Desarmado
+        {% elif alarme == 'armed_home' %}
+          Protegido (Casa)
+        {% elif alarme == 'armed_away' %}
+          Protegido (Fora)
+        {% elif alarme == 'triggered' %}
+          ALERTA!
+        {% else %}
+          {{ alarme }}
+        {% endif %}
+      icon_template: mdi:shield-home
+
+# Contagem de dispositivos de segurança ativos
+- platform: template
+  sensors:
+    dispositivos_seguranca_ativos:
+      friendly_name: "Dispositivos de Segurança Ativos"
+      unit_of_measurement: "dispositivos"
+      value_template: >
+        {% set count = 0 %}
+        {% for entity_id in [
+            'camera.entrada',
+            'camera.quintal',
+            'camera.garagem',
+            'binary_sensor.porta_entrada',
+            'binary_sensor.janelas_sala',
+            'binary_sensor.movimento_quintal'
+        ] %}
+          {% if states(entity_id) == 'on' or states(entity_id) == 'available' %}
+            {% set count = count + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ count }}
+      icon_template: mdi:shield-check
+
+# ==========================================
+# SENSORES DE SISTEMA
+# ==========================================
+
+# Status geral do sistema Home Assistant
+- platform: template
+  sensors:
+    status_sistema:
+      friendly_name: "Status do Sistema"
+      value_template: >
+        {% set uptime = states('sensor.uptime') %}
+        {% set dispositivos = states('sensor.dispositivos_online') | int(0) %}
+        {% set total = states('sensor.total_dispositivos') | int(0) %}
+        
+        {% if dispositivos >= total * 0.9 %}
+          Operacional
+        {% elif dispositivos >= total * 0.7 %}
+          Parcial
+        {% else %}
+          Problemas
+        {% endif %}
+      icon_template: mdi:home-automation
+
+# Versão do Home Assistant
+- platform: template
+  sensors:
+    versao_home_assistant:
+      friendly_name: "Versão Home Assistant"
+      value_template: "{{ state_attr('sensor.home_assistant', 'version') }}"
+      icon_template: mdi:information
+
+# Tempo de atividade do sistema
+- platform: uptime
+  name: "Uptime Sistema"
+
+# Total de dispositivos conectados
+- platform: template
+  sensors:
+    total_dispositivos:
+      friendly_name: "Total de Dispositivos"
+      unit_of_measurement: "dispositivos"
+      value_template: >
+        {% set count = 0 %}
+        {% for state in states %}
+          {% if not state.entity_id.startswith('sun.') and 
+                not state.entity_id.startswith('weather.') and
+                not state.entity_id.startswith('sensor.date') and
+                not state.entity_id.startswith('sensor.time') %}
+            {% set count = count + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ count }}
+      icon_template: mdi:devices
+
+# Dispositivos online
+- platform: template
+  sensors:
+    dispositivos_online:
+      friendly_name: "Dispositivos Online"
+      unit_of_measurement: "dispositivos"
+      value_template: >
+        {% set count = 0 %}
+        {% for state in states %}
+          {% if state.state not in ['unavailable', 'unknown'] and
+                not state.entity_id.startswith('sun.') and 
+                not state.entity_id.startswith('weather.') and
+                not state.entity_id.startswith('sensor.date') and
+                not state.entity_id.startswith('sensor.time') %}
+            {% set count = count + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ count }}
+      icon_template: mdi:devices
+
+# ==========================================
+# SENSORES DE ATIVIDADE
+# ==========================================
+
+# Atividade na casa (baseada em presença)
+- platform: template
+  sensors:
+    atividade_casa:
+      friendly_name: "Atividade na Casa"
+      value_template: >
+        {% set presenca_sala = states('binary_sensor.presenca_sala') %}
+        {% set presenca_cozinha = states('binary_sensor.presenca_cozinha') %}
+        {% set presenca_quarto = states('binary_sensor.presenca_quarto_principal') %}
+        
+        {% if presenca_sala == 'on' or presenca_cozinha == 'on' or presenca_quarto == 'on' %}
+          Ativa
+        {% else %}
+          Vazia
+        {% endif %}
+      icon_template: mdi:motion-sensor
+
+# Última atividade detectada
+- platform: template
+  sensors:
+    ultima_atividade:
+      friendly_name: "Última Atividade"
+      value_template: >
+        {% set ultima = '' %}
+        {% set tempo = now() %}
+        
+        {% for entity_id in [
+            'binary_sensor.presenca_sala',
+            'binary_sensor.presenca_cozinha',
+            'binary_sensor.presenca_quarto_principal'
+        ] %}
+          {% set last_changed = state_attr(entity_id, 'last_changed') %}
+          {% if last_changed and last_changed > tempo %}
+            {% set tempo = last_changed %}
+            {% set ultima = entity_id.split('.')[1].replace('_', ' ').title() %}
+          {% endif %}
+        {% endfor %}
+        
+        {% if ultima %}
+          {{ ultima }} - {{ as_timestamp(tempo) | timestamp_custom('%H:%M') }}
+        {% else %}
+          Nenhuma atividade recente
+        {% endif %}
+      icon_template: mdi:clock-outline
+
+# ==========================================
+# SENSORES DE PREVISÃO E INTELIGÊNCIA
+# ==========================================
+
+# Previsão de consumo baseada em padrões
+- platform: template
+  sensors:
+    previsao_consumo_amanha:
+      friendly_name: "Previsão Consumo Amanhã"
+      unit_of_measurement: "kWh"
+      value_template: >
+        {% set consumo_hoje = states('sensor.consumo_energia_total') | float(0) %}
+        {% set temperatura_amanha = state_attr('weather.casa', 'temperature') %}
+        {% set temperatura_hoje = state_attr('weather.casa', 'temperature') %}
+        
+        {% set fator_temp = 1.0 %}
+        {% if temperatura_amanha > temperatura_hoje + 5 %}
+          {% set fator_temp = 1.3 %}
+        {% elif temperatura_amanha < temperatura_hoje - 5 %}
+          {% set fator_temp = 1.2 %}
+        {% endif %}
+        
+        {{ (consumo_hoje * fator_temp) | round(2) }}
+      icon_template: mdi:crystal-ball
+
+# Recomendação de economia
+- platform: template
+  sensors:
+    recomendacao_economia:
+      friendly_name: "Recomendação de Economia"
+      value_template: >
+        {% set consumo = states('sensor.consumo_energia_total') | float(0) %}
+        {% set media_consumo = 25.0 %}
+        
+        {% if consumo > media_consumo * 1.2 %}
+          Reduzir uso do ar condicionado
+        {% elif consumo > media_consumo %}
+          Desligar dispositivos não utilizados
+        {% elif consumo < media_consumo * 0.8 %}
+          Excelente eficiência energética!
+        {% else %}
+          Consumo dentro da média
+        {% endif %}
+      icon_template: mdi:lightbulb-on
+
+# ==========================================
+# SENSORES DE INTEGRAÇÃO EXTERNA
+# ==========================================
+
+# Status das integrações externas
+- platform: template
+  sensors:
+    status_integracoes:
+      friendly_name: "Status das Integrações"
+      value_template: >
+        {% set integracoes_ok = 0 %}
+        {% set total_integracoes = 0 %}
+        
+        {% for entity_id in [
+            'weather.casa',
+            'calendar.agenda_pessoal',
+            'sensor.spotify_playing'
+        ] %}
+          {% set total_integracoes = total_integracoes + 1 %}
+          {% if states(entity_id) != 'unavailable' %}
+            {% set integracoes_ok = integracoes_ok + 1 %}
+          {% endif %}
+        {% endfor %}
+        
+        {{ integracoes_ok }}/{{ total_integracoes }} operacionais
+      icon_template: mdi:api

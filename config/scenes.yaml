@@ -1,0 +1,345 @@
+# Cenas da Casa Inteligente
+# Configurações pré-definidas para diferentes situações
+
+# ==========================================
+# CENAS MATINAIS
+# ==========================================
+
+# Cena de despertar suave
+- name: "Despertar Suave"
+  entities:
+    light.quarto_principal:
+      state: on
+      brightness_pct: 30
+      color_temp: 400
+    light.cozinha:
+      state: on
+      brightness_pct: 60
+      color_temp: 500
+    cover.cortinas_quarto:
+      state: open
+    climate.quarto_principal:
+      temperature: 20
+    switch.cafeteira_inteligente:
+      state: on
+
+# Cena de manhã ativa
+- name: "Manhã Ativa"
+  entities:
+    light.sala:
+      state: on
+      brightness_pct: 80
+      color_temp: 500
+    light.cozinha:
+      state: on
+      brightness_pct: 90
+      color_temp: 500
+    light.corredor:
+      state: on
+      brightness_pct: 70
+      color_temp: 400
+    climate.sala:
+      temperature: 22
+    climate.cozinha:
+      temperature: 20
+    cover.cortinas_quarto:
+      state: open
+    cover.cortinas_sala:
+      state: open
+
+# ==========================================
+# CENAS NOTURNAS
+# ==========================================
+
+# Cena de relaxamento noturno
+- name: "Relaxamento Noturno"
+  entities:
+    light.sala:
+      state: on
+      brightness_pct: 40
+      rgb_color: [255, 150, 100]  # Luz quente e relaxante
+    light.luz_ambiente_sala:
+      state: on
+      brightness_pct: 20
+      rgb_color: [100, 100, 255]  # Luz azul ambiente
+    climate.sala:
+      temperature: 21
+    fan.purificador_ar_sala:
+      state: on
+      speed: low
+    media_player.sistema_som:
+      state: on
+      source: "Música Relaxante"
+
+# Cena de sono profundo
+- name: "Sono Profundo"
+  entities:
+    light.quarto_principal:
+      state: on
+      brightness_pct: 5
+      rgb_color: [255, 50, 50]  # Luz vermelha muito suave
+    light.corredor:
+      state: on
+      brightness_pct: 10
+      rgb_color: [255, 100, 100]
+    climate.quarto_principal:
+      temperature: 18
+    climate.sala:
+      temperature: 19
+    cover.cortinas_quarto:
+      state: closed
+    fan.purificador_ar_sala:
+      state: off
+    alarm_control_panel.casa:
+      state: armed_away
+
+# ==========================================
+# CENAS DE ENTERTAINMENT
+# ==========================================
+
+# Cena de cinema
+- name: "Cinema"
+  entities:
+    light.sala:
+      state: off
+    light.luz_ambiente_sala:
+      state: on
+      brightness_pct: 15
+      rgb_color: [0, 50, 100]  # Luz azul ambiente de cinema
+    cover.cortinas_sala:
+      state: closed
+    climate.sala:
+      temperature: 21
+    media_player.tv_sala:
+      state: on
+      source: "Netflix"
+    media_player.sistema_som:
+      state: on
+      volume_level: 0.6
+
+# Cena de festa
+- name: "Festa"
+  entities:
+    light.sala:
+      state: on
+      brightness_pct: 80
+      rgb_color: [255, 100, 255]  # Luz roxa festiva
+    light.cozinha:
+      state: on
+      brightness_pct: 70
+      rgb_color: [255, 200, 100]  # Luz dourada
+    light.corredor:
+      state: on
+      brightness_pct: 60
+      rgb_color: [100, 255, 100]  # Luz verde
+    media_player.sistema_som:
+      state: on
+      source: "Spotify"
+      volume_level: 0.8
+    climate.sala:
+      temperature: 20
+    fan.purificador_ar_sala:
+      state: on
+      speed: high
+
+# Cena de jantar romântico
+- name: "Jantar Romântico"
+  entities:
+    light.sala:
+      state: on
+      brightness_pct: 30
+      rgb_color: [255, 150, 50]  # Luz quente e acolhedora
+    light.mesa_jantar:
+      state: on
+      brightness_pct: 40
+      rgb_color: [255, 200, 100]  # Luz dourada
+    light.luz_ambiente_sala:
+      state: on
+      brightness_pct: 15
+      rgb_color: [255, 100, 100]  # Luz vermelha suave
+    media_player.sistema_som:
+      state: on
+      source: "Música Romântica"
+      volume_level: 0.3
+    climate.sala:
+      temperature: 22
+    fan.purificador_ar_sala:
+      state: on
+      speed: low
+
+# ==========================================
+# CENAS DE TRABALHO
+# ==========================================
+
+# Cena de trabalho/home office
+- name: "Trabalho"
+  entities:
+    light.escritorio:
+      state: on
+      brightness_pct: 90
+      color_temp: 600  # Luz branca e fria para concentração
+    light.sala:
+      state: on
+      brightness_pct: 60
+      color_temp: 500
+    climate.escritorio:
+      temperature: 21
+    climate.sala:
+      temperature: 22
+    cover.cortinas_escritorio:
+      state: open
+    media_player.sistema_som:
+      state: on
+      source: "Música Concentração"
+      volume_level: 0.2
+
+# Cena de reunião online
+- name: "Reunião Online"
+  entities:
+    light.escritorio:
+      state: on
+      brightness_pct: 95
+      color_temp: 500  # Luz neutra para câmera
+    light.fundo_escritorio:
+      state: on
+      brightness_pct: 40
+      color_temp: 400
+    climate.escritorio:
+      temperature: 21
+    media_player.webcam:
+      state: on
+    switch.microfone:
+      state: on
+
+# ==========================================
+# CENAS DE SEGURANÇA
+# ==========================================
+
+# Cena de ausência simulada
+- name: "Ausência Simulada"
+  entities:
+    light.sala:
+      state: on
+      brightness_pct: 60
+      color_temp: 400
+    light.quarto_principal:
+      state: on
+      brightness_pct: 40
+      color_temp: 400
+    light.exterior:
+      state: on
+      brightness_pct: 80
+      color_temp: 400
+    media_player.tv_sala:
+      state: on
+      source: "TV"
+    alarm_control_panel.casa:
+      state: armed_away
+    camera.entrada:
+      state: on
+
+# Cena de alerta de segurança
+- name: "Alerta de Segurança"
+  entities:
+    light.exterior:
+      state: on
+      brightness_pct: 100
+      rgb_color: [255, 0, 0]  # Luz vermelha de alerta
+    light.sala:
+      state: on
+      brightness_pct: 100
+      rgb_color: [255, 100, 0]  # Luz laranja
+    alarm_control_panel.casa:
+      state: triggered
+    camera.entrada:
+      state: on
+    camera.quintal:
+      state: on
+
+# ==========================================
+# CENAS DE ECONOMIA
+# ==========================================
+
+# Cena de economia de energia
+- name: "Economia de Energia"
+  entities:
+    light.sala:
+      state: on
+      brightness_pct: 30
+      color_temp: 400
+    light.cozinha:
+      state: on
+      brightness_pct: 40
+      color_temp: 400
+    light.corredor:
+      state: on
+      brightness_pct: 20
+      color_temp: 400
+    climate.sala:
+      temperature: 19
+    climate.quartos:
+      temperature: 18
+    fan.purificador_ar_sala:
+      state: off
+    media_player.sistema_som:
+      state: off
+
+# Cena de modo noturno (economia)
+- name: "Modo Noturno"
+  entities:
+    light.corredor:
+      state: on
+      brightness_pct: 10
+      rgb_color: [255, 100, 100]  # Luz vermelha muito suave
+    light.quarto_principal:
+      state: on
+      brightness_pct: 5
+      rgb_color: [255, 50, 50]
+    climate.quarto_principal:
+      temperature: 17
+    climate.sala:
+      temperature: 18
+    alarm_control_panel.casa:
+      state: armed_away
+
+# ==========================================
+# CENAS SAZONAIS
+# ==========================================
+
+# Cena de inverno
+- name: "Ambiente Inverno"
+  entities:
+    light.sala:
+      state: on
+      brightness_pct: 70
+      rgb_color: [255, 200, 100]  # Luz quente e acolhedora
+    light.cozinha:
+      state: on
+      brightness_pct: 80
+      rgb_color: [255, 180, 80]
+    climate.sala:
+      temperature: 23
+    climate.quartos:
+      temperature: 21
+    fan.purificador_ar_sala:
+      state: on
+      speed: medium
+
+# Cena de verão
+- name: "Ambiente Verão"
+  entities:
+    light.sala:
+      state: on
+      brightness_pct: 60
+      rgb_color: [150, 200, 255]  # Luz fria e refrescante
+    light.cozinha:
+      state: on
+      brightness_pct: 70
+      rgb_color: [180, 220, 255]
+    climate.sala:
+      temperature: 20
+    climate.quartos:
+      temperature: 19
+    fan.purificador_ar_sala:
+      state: on
+      speed: high

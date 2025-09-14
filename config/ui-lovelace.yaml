@@ -1,0 +1,633 @@
+# Dashboard Principal da Casa Inteligente
+# Interface Intuitiva com Design Neutro e Eficaz
+
+title: Casa Inteligente
+views:
+  # ==========================================
+  # VISÃO PRINCIPAL - OVERVIEW
+  # ==========================================
+  - title: "🏠 Visão Geral"
+    path: overview
+    icon: mdi:home
+    panel: false
+    cards:
+      # Cabeçalho com informações principais
+      - type: custom:mushroom-title-card
+        title: "Bem-vindo à Casa Inteligente"
+        subtitle: "{{ now().strftime('%A, %d de %B de %Y') }} - {{ now().strftime('%H:%M') }}"
+        alignment: center
+        
+      # Status da casa em tempo real
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: alarm_control_panel.casa
+            name: "Segurança"
+            icon: mdi:shield-home
+            primary_info: state
+            secondary_info: last-changed
+            layout: vertical
+            
+          - type: custom:mushroom-entity-card
+            entity: weather.casa
+            name: "Tempo"
+            icon: mdi:weather-partly-cloudy
+            primary_info: state
+            secondary_info: temperature
+            layout: vertical
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.consumo_energia_total
+            name: "Energia"
+            icon: mdi:lightning-bolt
+            primary_info: state
+            secondary_info: unit_of_measurement
+            layout: vertical
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.qualidade_ar_sala
+            name: "Qualidade do Ar"
+            icon: mdi:air-filter
+            primary_info: state
+            secondary_info: unit_of_measurement
+            layout: vertical
+
+      # Controles rápidos principais
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-light-card
+            entity: light.sala
+            name: "Sala"
+            icon: mdi:sofa
+            show_brightness_control: true
+            show_color_control: true
+            
+          - type: custom:mushroom-light-card
+            entity: light.cozinha
+            name: "Cozinha"
+            icon: mdi:chef-hat
+            show_brightness_control: true
+            
+          - type: custom:mushroom-light-card
+            entity: light.quarto_principal
+            name: "Quarto"
+            icon: mdi:bed
+            show_brightness_control: true
+            show_color_control: true
+
+      # Scripts e cenas principais
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: "Bom Dia"
+            secondary: "Rotina Matinal"
+            icon: mdi:weather-sunny
+            icon_color: orange
+            tap_action:
+              action: call-service
+              service: script.rotina_matinal
+              
+          - type: custom:mushroom-template-card
+            primary: "Noite de Cinema"
+            secondary: "Cenário Entretenimento"
+            icon: mdi:movie-open
+            icon_color: blue
+            tap_action:
+              action: call-service
+              service: script.noite_cinema
+              
+          - type: custom:mushroom-template-card
+            primary: "Modo Sono"
+            secondary: "Preparar para Dormir"
+            icon: mdi:bed
+            icon_color: purple
+            tap_action:
+              action: call-service
+              service: script.modo_sono
+              
+          - type: custom:mushroom-template-card
+            primary: "Economia"
+            secondary: "Modo Eficiência"
+            icon: mdi:leaf
+            icon_color: green
+            tap_action:
+              action: call-service
+              service: script.economia_energia
+
+  # ==========================================
+  # VISÃO DE ILUMINAÇÃO
+  # ==========================================
+  - title: "💡 Iluminação"
+    path: lighting
+    icon: mdi:lightbulb
+    panel: false
+    cards:
+      - type: custom:mushroom-title-card
+        title: "Sistema de Iluminação Inteligente"
+        subtitle: "Controle total das luzes da casa"
+        
+      # Luzes principais
+      - type: custom:mushroom-light-card
+        entity: light.sala
+        name: "Sala de Estar"
+        icon: mdi:sofa
+        show_brightness_control: true
+        show_color_control: true
+        show_color_temp_control: true
+        fill_container: true
+        
+      - type: custom:mushroom-light-card
+        entity: light.cozinha
+        name: "Cozinha"
+        icon: mdi:chef-hat
+        show_brightness_control: true
+        show_color_temp_control: true
+        fill_container: true
+        
+      - type: custom:mushroom-light-card
+        entity: light.quarto_principal
+        name: "Quarto Principal"
+        icon: mdi:bed
+        show_brightness_control: true
+        show_color_control: true
+        show_color_temp_control: true
+        fill_container: true
+        
+      - type: custom:mushroom-light-card
+        entity: light.corredor
+        name: "Corredor"
+        icon: mdi:walk
+        show_brightness_control: true
+        fill_container: true
+        
+      # Luzes ambiente
+      - type: section
+        label: "Luzes Ambiente"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-light-card
+            entity: light.luz_ambiente_sala
+            name: "Ambiente Sala"
+            icon: mdi:sofa
+            show_brightness_control: true
+            show_color_control: true
+            
+          - type: custom:mushroom-light-card
+            entity: light.mesa_jantar
+            name: "Mesa Jantar"
+            icon: mdi:table-chair
+            show_brightness_control: true
+            show_color_temp_control: true
+
+  # ==========================================
+  # VISÃO DE CLIMATIZAÇÃO
+  # ==========================================
+  - title: "🌡️ Climatização"
+    path: climate
+    icon: mdi:thermometer
+    panel: false
+    cards:
+      - type: custom:mushroom-title-card
+        title: "Controle de Temperatura e Conforto"
+        subtitle: "Climatização inteligente por ambiente"
+        
+      # Termostatos principais
+      - type: custom:mushroom-climate-card
+        entity: climate.sala
+        name: "Sala de Estar"
+        icon: mdi:sofa
+        show_temperature_control: true
+        hvac_modes:
+          - heat_cool
+          - heat
+          - cool
+          - off
+        fill_container: true
+        
+      - type: custom:mushroom-climate-card
+        entity: climate.quarto_principal
+        name: "Quarto Principal"
+        icon: mdi:bed
+        show_temperature_control: true
+        hvac_modes:
+          - heat_cool
+          - heat
+          - cool
+          - off
+        fill_container: true
+        
+      - type: custom:mushroom-climate-card
+        entity: climate.cozinha
+        name: "Cozinha"
+        icon: mdi:chef-hat
+        show_temperature_control: true
+        hvac_modes:
+          - heat_cool
+          - heat
+          - cool
+          - off
+        fill_container: true
+        
+      # Sensores de qualidade do ar
+      - type: section
+        label: "Qualidade do Ar"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.qualidade_ar_sala
+            name: "Sala"
+            icon: mdi:air-filter
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.qualidade_ar_quarto
+            name: "Quarto"
+            icon: mdi:air-filter
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.humidade_sala
+            name: "Humidade"
+            icon: mdi:water-percent
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+      # Purificadores de ar
+      - type: section
+        label: "Purificadores de Ar"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-fan-card
+            entity: fan.purificador_ar_sala
+            name: "Sala"
+            icon: mdi:air-filter
+            show_percentage_control: true
+            show_oscillate_control: true
+            
+          - type: custom:mushroom-fan-card
+            entity: fan.purificador_ar_quarto
+            name: "Quarto"
+            icon: mdi:air-filter
+            show_percentage_control: true
+
+  # ==========================================
+  # VISÃO DE SEGURANÇA
+  # ==========================================
+  - title: "🔒 Segurança"
+    path: security
+    icon: mdi:shield-home
+    panel: false
+    cards:
+      - type: custom:mushroom-title-card
+        title: "Sistema de Segurança"
+        subtitle: "Monitoramento e proteção da casa"
+        
+      # Painel de alarme
+      - type: custom:mushroom-alarm-panel-card
+        entity: alarm_control_panel.casa
+        name: "Alarme da Casa"
+        states:
+          - arm_away
+          - arm_home
+          - arm_night
+          - disarm
+        fill_container: true
+        
+      # Câmeras
+      - type: section
+        label: "Câmeras de Segurança"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-camera-card
+            entity: camera.entrada
+            name: "Entrada"
+            show_name: true
+            show_state: true
+            tap_action:
+              action: more-info
+              
+          - type: custom:mushroom-camera-card
+            entity: camera.quintal
+            name: "Quintal"
+            show_name: true
+            show_state: true
+            tap_action:
+              action: more-info
+              
+          - type: custom:mushroom-camera-card
+            entity: camera.garagem
+            name: "Garagem"
+            show_name: true
+            show_state: true
+            tap_action:
+              action: more-info
+              
+      # Sensores de segurança
+      - type: section
+        label: "Sensores de Segurança"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.porta_entrada
+            name: "Porta Entrada"
+            icon: mdi:door
+            primary_info: state
+            secondary_info: last-changed
+            
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.janelas_sala
+            name: "Janelas Sala"
+            icon: mdi:window-open
+            primary_info: state
+            secondary_info: last-changed
+            
+          - type: custom:mushroom-entity-card
+            entity: binary_sensor.movimento_quintal
+            name: "Movimento Quintal"
+            icon: mdi:motion-sensor
+            primary_info: state
+            secondary_info: last-changed
+
+  # ==========================================
+  # VISÃO DE ENTERTAINMENT
+  # ==========================================
+  - title: "🎵 Entretenimento"
+    path: entertainment
+    icon: mdi:music
+    panel: false
+    cards:
+      - type: custom:mushroom-title-card
+        title: "Sistema de Entretenimento"
+        subtitle: "Música, TV e diversão em casa"
+        
+      # Sistema de som multiroom
+      - type: section
+        label: "Sistema de Som Multiroom"
+        
+      - type: custom:mushroom-media-player-card
+        entity: media_player.sala
+        name: "Sala de Estar"
+        icon: mdi:speaker
+        show_volume_level: true
+        show_source: true
+        fill_container: true
+        
+      - type: custom:mushroom-media-player-card
+        entity: media_player.cozinha
+        name: "Cozinha"
+        icon: mdi:speaker
+        show_volume_level: true
+        show_source: true
+        fill_container: true
+        
+      - type: custom:mushroom-media-player-card
+        entity: media_player.quarto_principal
+        name: "Quarto"
+        icon: mdi:speaker
+        show_volume_level: true
+        show_source: true
+        fill_container: true
+        
+      # TV e Projetores
+      - type: section
+        label: "TV e Projetores"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-media-player-card
+            entity: media_player.tv_sala
+            name: "TV Sala"
+            icon: mdi:television
+            show_volume_level: true
+            show_source: true
+            
+          - type: custom:mushroom-media-player-card
+            entity: media_player.projetor_quarto
+            name: "Projetor Quarto"
+            icon: mdi:projector
+            show_volume_level: true
+            show_source: true
+
+  # ==========================================
+  # VISÃO DE ENERGIA
+  # ==========================================
+  - title: "⚡ Energia"
+    path: energy
+    icon: mdi:lightning-bolt
+    panel: false
+    cards:
+      - type: custom:mushroom-title-card
+        title: "Monitoramento de Energia"
+        subtitle: "Eficiência e sustentabilidade"
+        
+      # Consumo atual
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.consumo_energia_total
+            name: "Consumo Total"
+            icon: mdi:lightning-bolt
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.custo_energia_diario
+            name: "Custo Diário"
+            icon: mdi:currency-eur
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.potencia_solar
+            name: "Energia Solar"
+            icon: mdi:solar-power
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+      # Gráficos de consumo
+      - type: custom:mini-graph-card
+        entities:
+          - sensor.consumo_energia_total
+          - sensor.potencia_solar
+        name: "Consumo vs Solar"
+        hours_to_show: 24
+        points_per_hour: 2
+        line_color: "#4CAF50"
+        fill: fade
+        show_fill: true
+        show_legend: true
+        
+      # Dispositivos com maior consumo
+      - type: section
+        label: "Maiores Consumidores"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.consumo_ar_condicionado
+            name: "Ar Condicionado"
+            icon: mdi:air-conditioner
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.consumo_cafeteira
+            name: "Cafeteira"
+            icon: mdi:coffee
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.consumo_tv
+            name: "TV"
+            icon: mdi:television
+            primary_info: state
+            secondary_info: unit_of_measurement
+
+  # ==========================================
+  # VISÃO DE AUTOMAÇÕES
+  # ==========================================
+  - title: "🤖 Automações"
+    path: automations
+    icon: mdi:robot
+    panel: false
+    cards:
+      - type: custom:mushroom-title-card
+        title: "Automações Inteligentes"
+        subtitle: "Controle e monitoramento das automações"
+        
+      # Status das automações
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: automation.automacao_bom_dia
+            name: "Bom Dia"
+            icon: mdi:weather-sunny
+            primary_info: state
+            secondary_info: last-triggered
+            
+          - type: custom:mushroom-entity-card
+            entity: automation.iluminacao_presenca_corredor
+            name: "Iluminação Presença"
+            icon: mdi:motion-sensor
+            primary_info: state
+            secondary_info: last-triggered
+            
+          - type: custom:mushroom-entity-card
+            entity: automation.seguranca_maxima
+            name: "Segurança Máxima"
+            icon: mdi:shield-alert
+            primary_info: state
+            secondary_info: last-triggered
+            
+      # Controles manuais de automações
+      - type: section
+        label: "Controles Manuais"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: "Ativar Modo Festa"
+            secondary: "Preparar casa para festa"
+            icon: mdi:party-popper
+            icon_color: purple
+            tap_action:
+              action: call-service
+              service: script.modo_festa
+              
+          - type: custom:mushroom-template-card
+            primary: "Manutenção Sistema"
+            secondary: "Executar verificações"
+            icon: mdi:wrench
+            icon_color: blue
+            tap_action:
+              action: call-service
+              service: script.manutencao_sistema
+              
+          - type: custom:mushroom-template-card
+            primary: "Emergência"
+            secondary: "Ativar modo emergência"
+            icon: mdi:alert-circle
+            icon_color: red
+            tap_action:
+              action: call-service
+              service: script.emergencia
+
+  # ==========================================
+  # VISÃO DE CONFIGURAÇÕES
+  # ==========================================
+  - title: "⚙️ Configurações"
+    path: settings
+    icon: mdi:cog
+    panel: false
+    cards:
+      - type: custom:mushroom-title-card
+        title: "Configurações do Sistema"
+        subtitle: "Ajustes e preferências"
+        
+      # Status do sistema
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.uptime
+            name: "Tempo Online"
+            icon: mdi:clock
+            primary_info: state
+            secondary_info: last-updated
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.dispositivos_online
+            name: "Dispositivos Online"
+            icon: mdi:devices
+            primary_info: state
+            secondary_info: unit_of_measurement
+            
+          - type: custom:mushroom-entity-card
+            entity: sensor.versao_home_assistant
+            name: "Versão HA"
+            icon: mdi:information
+            primary_info: state
+            secondary_info: last-updated
+            
+      # Backup e atualizações
+      - type: section
+        label: "Sistema"
+        
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            primary: "Backup Manual"
+            secondary: "Criar backup agora"
+            icon: mdi:backup-restore
+            icon_color: blue
+            tap_action:
+              action: call-service
+              service: backup.create
+              
+          - type: custom:mushroom-template-card
+            primary: "Reiniciar HA"
+            secondary: "Reiniciar sistema"
+            icon: mdi:restart
+            icon_color: orange
+            tap_action:
+              action: call-service
+              service: homeassistant.restart
+
+# Configurações globais do tema
+mushroom:
+  primary_info: state
+  secondary_info: last-changed
+  icon_type: icon
+  card_mod:
+    style: |
+      ha-card {
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }

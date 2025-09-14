@@ -1,0 +1,315 @@
+# Personalizações da Casa Inteligente
+# Customizações específicas para dispositivos e entidades
+
+# ==========================================
+# LUZES - Personalizações
+# ==========================================
+
+light.sala:
+  friendly_name: "Luz Principal da Sala"
+  icon: mdi:sofa
+  emulated_hue_hidden: false
+  emulated_hue_name: "Sala Principal"
+
+light.cozinha:
+  friendly_name: "Luz da Cozinha"
+  icon: mdi:chef-hat
+  emulated_hue_hidden: false
+  emulated_hue_name: "Cozinha"
+
+light.quarto_principal:
+  friendly_name: "Luz do Quarto Principal"
+  icon: mdi:bed
+  emulated_hue_hidden: false
+  emulated_hue_name: "Quarto Principal"
+
+light.corredor:
+  friendly_name: "Luz do Corredor"
+  icon: mdi:walk
+  emulated_hue_hidden: false
+  emulated_hue_name: "Corredor"
+
+light.entrada:
+  friendly_name: "Luz da Entrada"
+  icon: mdi:door
+  emulated_hue_hidden: false
+  emulated_hue_name: "Entrada"
+
+light.luz_ambiente_sala:
+  friendly_name: "Luz Ambiente da Sala"
+  icon: mdi:lightbulb-outline
+  emulated_hue_hidden: false
+  emulated_hue_name: "Ambiente Sala"
+
+light.mesa_jantar:
+  friendly_name: "Luz da Mesa de Jantar"
+  icon: mdi:table-chair
+  emulated_hue_hidden: false
+  emulated_hue_name: "Mesa Jantar"
+
+# ==========================================
+# CLIMATIZAÇÃO - Personalizações
+# ==========================================
+
+climate.sala:
+  friendly_name: "Ar Condicionado da Sala"
+  icon: mdi:air-conditioner
+  emulated_hue_hidden: false
+  emulated_hue_name: "Clima Sala"
+
+climate.quarto_principal:
+  friendly_name: "Ar Condicionado do Quarto"
+  icon: mdi:air-conditioner
+  emulated_hue_hidden: false
+  emulated_hue_name: "Clima Quarto"
+
+climate.cozinha:
+  friendly_name: "Ar Condicionado da Cozinha"
+  icon: mdi:air-conditioner
+  emulated_hue_hidden: false
+  emulated_hue_name: "Clima Cozinha"
+
+# ==========================================
+# SENSORES - Personalizações
+# ==========================================
+
+sensor.temperatura_sala:
+  friendly_name: "Temperatura da Sala"
+  icon: mdi:thermometer
+  device_class: temperature
+  unit_of_measurement: "°C"
+
+sensor.humidade_sala:
+  friendly_name: "Humidade da Sala"
+  icon: mdi:water-percent
+  device_class: humidity
+  unit_of_measurement: "%"
+
+sensor.qualidade_ar_sala:
+  friendly_name: "Qualidade do Ar - Sala"
+  icon: mdi:air-filter
+  device_class: air_quality
+
+sensor.consumo_energia_total:
+  friendly_name: "Consumo Total de Energia"
+  icon: mdi:lightning-bolt
+  device_class: energy
+  unit_of_measurement: "kWh"
+
+sensor.custo_energia_diario:
+  friendly_name: "Custo Diário de Energia"
+  icon: mdi:currency-eur
+  unit_of_measurement: "€"
+
+# ==========================================
+# CÂMERAS - Personalizações
+# ==========================================
+
+camera.entrada:
+  friendly_name: "Câmera da Entrada"
+  icon: mdi:camera
+
+camera.quintal:
+  friendly_name: "Câmera do Quintal"
+  icon: mdi:camera
+
+camera.garagem:
+  friendly_name: "Câmera da Garagem"
+  icon: mdi:camera
+
+# ==========================================
+# SENSORES DE SEGURANÇA - Personalizações
+# ==========================================
+
+binary_sensor.porta_entrada:
+  friendly_name: "Porta da Entrada"
+  icon: mdi:door
+  device_class: door
+
+binary_sensor.janelas_sala:
+  friendly_name: "Janelas da Sala"
+  icon: mdi:window-open
+  device_class: window
+
+binary_sensor.movimento_quintal:
+  friendly_name: "Movimento no Quintal"
+  icon: mdi:motion-sensor
+  device_class: motion
+
+binary_sensor.fumaça_cozinha:
+  friendly_name: "Fumaça na Cozinha"
+  icon: mdi:smoke
+  device_class: smoke
+
+# ==========================================
+# SENSORES DE PRESENÇA - Personalizações
+# ==========================================
+
+binary_sensor.presenca_sala:
+  friendly_name: "Presença na Sala"
+  icon: mdi:motion-sensor
+  device_class: motion
+
+binary_sensor.presenca_cozinha:
+  friendly_name: "Presença na Cozinha"
+  icon: mdi:motion-sensor
+  device_class: motion
+
+binary_sensor.presenca_quarto_principal:
+  friendly_name: "Presença no Quarto Principal"
+  icon: mdi:motion-sensor
+  device_class: motion
+
+binary_sensor.presenca_corredor:
+  friendly_name: "Presença no Corredor"
+  icon: mdi:motion-sensor
+  device_class: motion
+
+binary_sensor.sono_detectado:
+  friendly_name: "Sono Detectado"
+  icon: mdi:bed
+  device_class: presence
+
+# ==========================================
+# MÍDIA PLAYERS - Personalizações
+# ==========================================
+
+media_player.tv_sala:
+  friendly_name: "TV da Sala"
+  icon: mdi:television
+  device_class: tv
+
+media_player.sistema_som:
+  friendly_name: "Sistema de Som"
+  icon: mdi:speaker
+
+media_player.assistente_voz:
+  friendly_name: "Assistente de Voz"
+  icon: mdi:microphone
+
+media_player.spotify_sala:
+  friendly_name: "Spotify Sala"
+  icon: mdi:spotify
+
+# ==========================================
+# INTERRUPTORES - Personalizações
+# ==========================================
+
+switch.cafeteira_inteligente:
+  friendly_name: "Cafeteira Inteligente"
+  icon: mdi:coffee
+  device_class: switch
+
+switch.tostadeira:
+  friendly_name: "Tostadeira"
+  icon: mdi:toaster
+  device_class: switch
+
+# ==========================================
+# VENTILADORES - Personalizações
+# ==========================================
+
+fan.purificador_ar_sala:
+  friendly_name: "Purificador de Ar - Sala"
+  icon: mdi:air-filter
+
+fan.purificador_ar_quarto:
+  friendly_name: "Purificador de Ar - Quarto"
+  icon: mdi:air-filter
+
+# ==========================================
+# COBERTURAS - Personalizações
+# ==========================================
+
+cover.cortinas_sala:
+  friendly_name: "Cortinas da Sala"
+  icon: mdi:blinds
+  device_class: curtain
+
+cover.janelas_sala:
+  friendly_name: "Janelas da Sala"
+  icon: mdi:window-open
+  device_class: window
+
+cover.cortinas_quarto:
+  friendly_name: "Cortinas do Quarto"
+  icon: mdi:blinds
+  device_class: curtain
+
+# ==========================================
+# ALARME - Personalizações
+# ==========================================
+
+alarm_control_panel.casa:
+  friendly_name: "Alarme da Casa"
+  icon: mdi:shield-home
+
+# ==========================================
+# WEATHER - Personalizações
+# ==========================================
+
+weather.casa:
+  friendly_name: "Tempo na Casa"
+  icon: mdi:weather-partly-cloudy
+
+# ==========================================
+# CALENDAR - Personalizações
+# ==========================================
+
+calendar.agenda_pessoal:
+  friendly_name: "Agenda Pessoal"
+  icon: mdi:calendar
+
+# ==========================================
+# SENSORES PERSONALIZADOS - Personalizações
+# ==========================================
+
+sensor.status_casa:
+  friendly_name: "Status da Casa"
+  icon: mdi:home
+
+sensor.eficiencia_energetica:
+  friendly_name: "Eficiência Energética"
+  icon: mdi:leaf
+  unit_of_measurement: "%"
+
+sensor.conforto_termico:
+  friendly_name: "Conforto Térmico"
+  icon: mdi:thermometer
+
+sensor.ultima_atividade:
+  friendly_name: "Última Atividade"
+  icon: mdi:clock-outline
+
+# ==========================================
+# INPUTS - Personalizações
+# ==========================================
+
+input_boolean.notificacoes_telegram:
+  friendly_name: "Notificações Telegram"
+  icon: mdi:telegram
+
+input_boolean.notificacoes_email:
+  friendly_name: "Notificações Email"
+  icon: mdi:email
+
+input_boolean.manutencao_concluida:
+  friendly_name: "Manutenção Concluída"
+  icon: mdi:check-circle
+
+input_number.temperatura_desejada_sala:
+  friendly_name: "Temperatura Desejada - Sala"
+  icon: mdi:thermometer
+  unit_of_measurement: "°C"
+
+input_select.modo_clima_sala:
+  friendly_name: "Modo Clima - Sala"
+  icon: mdi:air-conditioner
+
+input_select.idioma_assistente:
+  friendly_name: "Idioma do Assistente"
+  icon: mdi:translate
+
+input_text.comando_voz_customizado:
+  friendly_name: "Comando de Voz Customizado"
+  icon: mdi:microphone

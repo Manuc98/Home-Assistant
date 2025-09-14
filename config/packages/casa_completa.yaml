@@ -1,0 +1,639 @@
+# Pacote Completo da Casa Inteligente
+# Configurações específicas por ambiente
+
+# ==========================================
+# CONFIGURAÇÕES DE ENTRADA E RECEPÇÃO
+# ==========================================
+
+light:
+  - platform: template
+    lights:
+      luz_entrada:
+        friendly_name: "Luz da Entrada"
+        value_template: "{{ states('light.luz_entrada_real') }}"
+        turn_on:
+          service: light.turn_on
+          target:
+            entity_id: light.luz_entrada_real
+        turn_off:
+          service: light.turn_off
+          target:
+            entity_id: light.luz_entrada_real
+
+# Sensor de presença na entrada
+binary_sensor:
+  - platform: template
+    sensors:
+      presenca_entrada:
+        friendly_name: "Presença na Entrada"
+        value_template: >
+          {% set motion = states('binary_sensor.motion_entrada') %}
+          {% set door = states('binary_sensor.porta_entrada') %}
+          {{ motion == 'on' or door == 'on' }}
+
+# ==========================================
+# CONFIGURAÇÕES DA SALA DE ESTAR
+# ==========================================
+
+light:
+  - platform: group
+    name: luzes_sala
+    entities:
+      - light.luz_principal_sala
+      - light.luz_ambiente_sala
+      - light.mesa_jantar
+
+climate:
+  - platform: template
+    climates:
+      clima_sala:
+        friendly_name: "Clima Sala"
+        temperature_unit: C
+        current_temperature_template: "{{ states('sensor.temperatura_sala') }}"
+        target_temperature_template: "{{ states('input_number.temperatura_desejada_sala') }}"
+        hvac_mode_template: "{{ states('input_select.modo_clima_sala') }}"
+        hvac_modes:
+          - "off"
+          - "heat"
+          - "cool"
+          - "heat_cool"
+        turn_on:
+          service: input_select.select_option
+          target:
+            entity_id: input_select.modo_clima_sala
+          data:
+            option: "heat"
+        turn_off:
+          service: input_select.select_option
+          target:
+            entity_id: input_select.modo_clima_sala
+          data:
+            option: "off"
+
+# Inputs para controle da sala
+input_number:
+  temperatura_desejada_sala:
+    name: "Temperatura Desejada Sala"
+    min: 16
+    max: 28
+    step: 1
+    unit_of_measurement: "°C"
+    initial: 22
+
+input_select:
+  modo_clima_sala:
+    name: "Modo Clima Sala"
+    options:
+      - "off"
+      - "heat"
+      - "cool"
+      - "heat_cool"
+    initial: "heat"
+
+# ==========================================
+# CONFIGURAÇÕES DA COZINHA
+# ==========================================
+
+switch:
+  - platform: template
+    switches:
+      cafeteira_inteligente:
+        friendly_name: "Cafeteira Inteligente"
+        value_template: "{{ states('switch.cafeteira_real') }}"
+        turn_on:
+          service: switch.turn_on
+          target:
+            entity_id: switch.cafeteira_real
+        turn_off:
+          service: switch.turn_off
+          target:
+            entity_id: switch.cafeteira_real
+
+      tostadeira:
+        friendly_name: "Tostadeira"
+        value_template: "{{ states('switch.tostadeira_real') }}"
+        turn_on:
+          service: switch.turn_on
+          target:
+            entity_id: switch.tostadeira_real
+        turn_off:
+          service: switch.turn_off
+          target:
+            entity_id: switch.tostadeira_real
+
+# Sensor de fumaça na cozinha
+binary_sensor:
+  - platform: template
+    sensors:
+      fumaça_cozinha:
+        friendly_name: "Fumaça na Cozinha"
+        value_template: "{{ states('binary_sensor.smoke_cozinha') }}"
+        device_class: smoke
+
+# ==========================================
+# CONFIGURAÇÕES DOS QUARTOS
+# ==========================================
+
+light:
+  - platform: template
+    lights:
+      luz_quarto_principal:
+        friendly_name: "Luz Quarto Principal"
+        value_template: "{{ states('light.luz_quarto_real') }}"
+        turn_on:
+          service: light.turn_on
+          target:
+            entity_id: light.luz_quarto_real
+        turn_off:
+          service: light.turn_off
+          target:
+            entity_id: light.luz_quarto_real
+
+# Sensor de sono
+binary_sensor:
+  - platform: template
+    sensors:
+      sono_detectado:
+        friendly_name: "Sono Detectado"
+        value_template: >
+          {% set luz_quarto = states('light.luz_quarto_principal') %}
+          {% set movimento = states('binary_sensor.motion_quarto') %}
+          {% set hora = now().hour %}
+          {{ luz_quarto == 'off' and movimento == 'off' and hora >= 22 }}
+
+# ==========================================
+# CONFIGURAÇÕES DE SEGURANÇA
+# ==========================================
+
+alarm_control_panel:
+  - platform: manual
+    name: casa
+    code: !secret alarm_code
+    pending_time: 30
+    trigger_time: 300
+    disarmed:
+      trigger_time: 0
+    armed_home:
+      pending_time: 0
+      trigger_time: 180
+    armed_away:
+      pending_time: 30
+      trigger_time: 300
+    armed_night:
+      pending_time: 0
+      trigger_time: 180
+
+# Câmeras de segurança
+camera:
+  - platform: generic
+    name: "Câmera Entrada"
+    still_image_url: "http://192.168.1.100:8080/snapshot"
+    stream_source: "http://192.168.1.100:8080/stream"
+    verify_ssl: false
+
+  - platform: generic
+    name: "Câmera Quintal"
+    still_image_url: "http://192.168.1.101:8080/snapshot"
+    stream_source: "http://192.168.1.101:8080/stream"
+    verify_ssl: false
+
+# Sensores de segurança
+binary_sensor:
+  - platform: template
+    sensors:
+      porta_entrada:
+        friendly_name: "Porta da Entrada"
+        value_template: "{{ states('binary_sensor.door_entrada') }}"
+        device_class: door
+
+      janelas_sala:
+        friendly_name: "Janelas da Sala"
+        value_template: >
+          {% set janela1 = states('binary_sensor.window_sala_1') %}
+          {% set janela2 = states('binary_sensor.window_sala_2') %}
+          {{ janela1 == 'on' or janela2 == 'on' }}
+
+      movimento_quintal:
+        friendly_name: "Movimento no Quintal"
+        value_template: "{{ states('binary_sensor.motion_quintal') }}"
+        device_class: motion
+
+# ==========================================
+# CONFIGURAÇÕES DE ENTERTAINMENT
+# ==========================================
+
+media_player:
+  - platform: template
+    media_players:
+      tv_sala:
+        friendly_name: "TV Sala"
+        device_class: tv
+        state_template: "{{ states('media_player.tv_real') }}"
+        source_template: "{{ state_attr('media_player.tv_real', 'source') }}"
+        volume_level_template: "{{ state_attr('media_player.tv_real', 'volume_level') }}"
+        is_volume_muted_template: "{{ state_attr('media_player.tv_real', 'is_volume_muted') }}"
+        turn_on:
+          service: media_player.turn_on
+          target:
+            entity_id: media_player.tv_real
+        turn_off:
+          service: media_player.turn_off
+          target:
+            entity_id: media_player.tv_real
+        volume_up:
+          service: media_player.volume_up
+          target:
+            entity_id: media_player.tv_real
+        volume_down:
+          service: media_player.volume_down
+          target:
+            entity_id: media_player.tv_real
+        mute:
+          service: media_player.volume_mute
+          target:
+            entity_id: media_player.tv_real
+          data:
+            is_volume_muted: true
+        select_source:
+          service: media_player.select_source
+          target:
+            entity_id: media_player.tv_real
+          data:
+            source: "{{ source }}"
+
+  - platform: template
+    media_players:
+      sistema_som:
+        friendly_name: "Sistema de Som"
+        state_template: "{{ states('media_player.som_real') }}"
+        source_template: "{{ state_attr('media_player.som_real', 'source') }}"
+        volume_level_template: "{{ state_attr('media_player.som_real', 'volume_level') }}"
+        turn_on:
+          service: media_player.turn_on
+          target:
+            entity_id: media_player.som_real
+        turn_off:
+          service: media_player.turn_off
+          target:
+            entity_id: media_player.som_real
+        volume_up:
+          service: media_player.volume_up
+          target:
+            entity_id: media_player.som_real
+        volume_down:
+          service: media_player.volume_down
+          target:
+            entity_id: media_player.som_real
+        select_source:
+          service: media_player.select_source
+          target:
+            entity_id: media_player.som_real
+          data:
+            source: "{{ source }}"
+
+# ==========================================
+# CONFIGURAÇÕES DE VENTILAÇÃO E PURIFICAÇÃO
+# ==========================================
+
+fan:
+  - platform: template
+    fans:
+      purificador_ar_sala:
+        friendly_name: "Purificador de Ar Sala"
+        value_template: "{{ states('fan.purificador_real') }}"
+        speed_template: "{{ state_attr('fan.purificador_real', 'speed') }}"
+        turn_on:
+          service: fan.turn_on
+          target:
+            entity_id: fan.purificador_real
+        turn_off:
+          service: fan.turn_off
+          target:
+            entity_id: fan.purificador_real
+        set_speed:
+          service: fan.set_speed
+          target:
+            entity_id: fan.purificador_real
+          data:
+            speed: "{{ speed }}"
+
+# ==========================================
+# CONFIGURAÇÕES DE COBERTURAS (CORTINAS/JANELAS)
+# ==========================================
+
+cover:
+  - platform: template
+    covers:
+      cortinas_sala:
+        friendly_name: "Cortinas da Sala"
+        value_template: "{{ states('cover.cortinas_real') }}"
+        open_cover:
+          service: cover.open_cover
+          target:
+            entity_id: cover.cortinas_real
+        close_cover:
+          service: cover.close_cover
+          target:
+            entity_id: cover.cortinas_real
+        stop_cover:
+          service: cover.stop_cover
+          target:
+            entity_id: cover.cortinas_real
+
+      janelas_sala:
+        friendly_name: "Janelas da Sala"
+        value_template: "{{ states('cover.janelas_real') }}"
+        open_cover:
+          service: cover.open_cover
+          target:
+            entity_id: cover.janelas_real
+        close_cover:
+          service: cover.close_cover
+          target:
+            entity_id: cover.janelas_real
+        stop_cover:
+          service: cover.stop_cover
+          target:
+            entity_id: cover.janelas_real
+
+# ==========================================
+# CONFIGURAÇÕES DE PRESENÇA E MOVIMENTO
+# ==========================================
+
+binary_sensor:
+  - platform: template
+    sensors:
+      presenca_sala:
+        friendly_name: "Presença na Sala"
+        value_template: "{{ states('binary_sensor.motion_sala') }}"
+        device_class: motion
+
+      presenca_cozinha:
+        friendly_name: "Presença na Cozinha"
+        value_template: "{{ states('binary_sensor.motion_cozinha') }}"
+        device_class: motion
+
+      presenca_quarto_principal:
+        friendly_name: "Presença no Quarto Principal"
+        value_template: "{{ states('binary_sensor.motion_quarto') }}"
+        device_class: motion
+
+      presenca_corredor:
+        friendly_name: "Presença no Corredor"
+        value_template: "{{ states('binary_sensor.motion_corredor') }}"
+        device_class: motion
+
+# ==========================================
+# CONFIGURAÇÕES DE SENSORES AMBIENTAIS
+# ==========================================
+
+sensor:
+  - platform: template
+    sensors:
+      temperatura_sala:
+        friendly_name: "Temperatura Sala"
+        unit_of_measurement: "°C"
+        value_template: "{{ states('sensor.temp_sala_real') }}"
+        device_class: temperature
+
+      humidade_sala:
+        friendly_name: "Humidade Sala"
+        unit_of_measurement: "%"
+        value_template: "{{ states('sensor.humidity_sala_real') }}"
+        device_class: humidity
+
+      qualidade_ar_sala:
+        friendly_name: "Qualidade do Ar Sala"
+        unit_of_measurement: "IAQ"
+        value_template: "{{ states('sensor.air_quality_sala_real') }}"
+        device_class: air_quality
+
+      temperatura_quarto:
+        friendly_name: "Temperatura Quarto"
+        unit_of_measurement: "°C"
+        value_template: "{{ states('sensor.temp_quarto_real') }}"
+        device_class: temperature
+
+      humidade_quarto:
+        friendly_name: "Humidade Quarto"
+        unit_of_measurement: "%"
+        value_template: "{{ states('sensor.humidity_quarto_real') }}"
+        device_class: humidity
+
+      qualidade_ar_quarto:
+        friendly_name: "Qualidade do Ar Quarto"
+        unit_of_measurement: "IAQ"
+        value_template: "{{ states('sensor.air_quality_quarto_real') }}"
+        device_class: air_quality
+
+      temperatura_cozinha:
+        friendly_name: "Temperatura Cozinha"
+        unit_of_measurement: "°C"
+        value_template: "{{ states('sensor.temp_cozinha_real') }}"
+        device_class: temperature
+
+      humidade_cozinha:
+        friendly_name: "Humidade Cozinha"
+        unit_of_measurement: "%"
+        value_template: "{{ states('sensor.humidity_cozinha_real') }}"
+        device_class: humidity
+
+      qualidade_ar_cozinha:
+        friendly_name: "Qualidade do Ar Cozinha"
+        unit_of_measurement: "IAQ"
+        value_template: "{{ states('sensor.air_quality_cozinha_real') }}"
+        device_class: air_quality
+
+# ==========================================
+# CONFIGURAÇÕES DE MONITORAMENTO DE ENERGIA
+# ==========================================
+
+sensor:
+  - platform: template
+    sensors:
+      consumo_ar_condicionado:
+        friendly_name: "Consumo Ar Condicionado"
+        unit_of_measurement: "kWh"
+        value_template: "{{ states('sensor.power_ac_real') }}"
+
+      consumo_cafeteira:
+        friendly_name: "Consumo Cafeteira"
+        unit_of_measurement: "kWh"
+        value_template: "{{ states('sensor.power_cafeteira_real') }}"
+
+      consumo_tv:
+        friendly_name: "Consumo TV"
+        unit_of_measurement: "kWh"
+        value_template: "{{ states('sensor.power_tv_real') }}"
+
+      consumo_luzes:
+        friendly_name: "Consumo Luzes"
+        unit_of_measurement: "kWh"
+        value_template: "{{ states('sensor.power_lights_real') }}"
+
+      consumo_eletrodomesticos:
+        friendly_name: "Consumo Eletrodomésticos"
+        unit_of_measurement: "kWh"
+        value_template: "{{ states('sensor.power_appliances_real') }}"
+
+      potencia_solar:
+        friendly_name: "Potência Solar"
+        unit_of_measurement: "kW"
+        value_template: "{{ states('sensor.solar_power_real') }}"
+
+# ==========================================
+# CONFIGURAÇÕES DE ASSISTENTE DE VOZ
+# ==========================================
+
+tts:
+  - platform: google_translate
+    service_name: google_translate_say
+    language: pt
+
+media_player:
+  - platform: template
+    media_players:
+      assistente_voz:
+        friendly_name: "Assistente de Voz"
+        state_template: "{{ states('media_player.assistente_real') }}"
+        volume_level_template: "{{ state_attr('media_player.assistente_real', 'volume_level') }}"
+        turn_on:
+          service: media_player.turn_on
+          target:
+            entity_id: media_player.assistente_real
+        turn_off:
+          service: media_player.turn_off
+          target:
+            entity_id: media_player.assistente_real
+        volume_up:
+          service: media_player.volume_up
+          target:
+            entity_id: media_player.assistente_real
+        volume_down:
+          service: media_player.volume_down
+          target:
+            entity_id: media_player.assistente_real
+
+# ==========================================
+# CONFIGURAÇÕES DE INTEGRAÇÃO COM SERVIÇOS EXTERNOS
+# ==========================================
+
+calendar:
+  - platform: google
+    client_id: !secret google_client_id
+    client_secret: !secret google_client_secret
+    entities:
+      - agenda_pessoal:
+          name: "Agenda Pessoal"
+          track: true
+
+# Integração com Spotify
+media_player:
+  - platform: spotify
+    client_id: !secret spotify_client_id
+    client_secret: !secret spotify_client_secret
+    entities:
+      - spotify_sala:
+          name: "Spotify Sala"
+      - spotify_cozinha:
+          name: "Spotify Cozinha"
+      - spotify_quarto:
+          name: "Spotify Quarto"
+
+# ==========================================
+# CONFIGURAÇÕES DE NOTIFICAÇÕES
+# ==========================================
+
+input_boolean:
+  notificacoes_telegram:
+    name: "Notificações Telegram"
+    initial: true
+    icon: mdi:telegram
+
+  notificacoes_email:
+    name: "Notificações Email"
+    initial: true
+    icon: mdi:email
+
+  manutencao_concluida:
+    name: "Manutenção Concluída"
+    initial: false
+    icon: mdi:check-circle
+
+# ==========================================
+# CONFIGURAÇÕES DE BACKUP E MANUTENÇÃO
+# ==========================================
+
+input_datetime:
+  ultimo_backup:
+    name: "Último Backup"
+    has_date: true
+    has_time: true
+
+  proxima_manutencao:
+    name: "Próxima Manutenção"
+    has_date: true
+    has_time: true
+    initial: "2024-01-15 10:00:00"
+
+  ultimo_uso_luz_sala:
+    name: "Último Uso Luz Sala"
+    has_date: true
+    has_time: true
+
+# ==========================================
+# CONFIGURAÇÕES DE GRUPOS FINAIS
+# ==========================================
+
+group:
+  # Grupo de todos os dispositivos de luz
+  luzes_casa:
+    name: "Todas as Luzes"
+    entities:
+      - light.luz_entrada
+      - light.luzes_sala
+      - light.luz_quarto_principal
+      - light.corredor
+
+  # Grupo de todos os dispositivos de clima
+  climatizacao_casa:
+    name: "Climatização da Casa"
+    entities:
+      - climate.clima_sala
+      - climate.quarto_principal
+      - climate.cozinha
+
+  # Grupo de todos os dispositivos de segurança
+  seguranca_casa:
+    name: "Segurança da Casa"
+    entities:
+      - alarm_control_panel.casa
+      - camera.entrada
+      - camera.quintal
+      - binary_sensor.porta_entrada
+      - binary_sensor.janelas_sala
+      - binary_sensor.movimento_quintal
+
+  # Grupo de todos os dispositivos de entretenimento
+  entretenimento_casa:
+    name: "Entretenimento da Casa"
+    entities:
+      - media_player.tv_sala
+      - media_player.sistema_som
+      - media_player.spotify_sala
+      - media_player.spotify_cozinha
+      - media_player.spotify_quarto
+
+  # Grupo de todos os sensores ambientais
+  sensores_ambientais:
+    name: "Sensores Ambientais"
+    entities:
+      - sensor.temperatura_sala
+      - sensor.humidade_sala
+      - sensor.qualidade_ar_sala
+      - sensor.temperatura_quarto
+      - sensor.humidade_quarto
+      - sensor.qualidade_ar_quarto
+      - sensor.temperatura_cozinha
+      - sensor.humidade_cozinha
+      - sensor.qualidade_ar_cozinha
