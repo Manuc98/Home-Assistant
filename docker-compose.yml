@@ -25,22 +25,6 @@ services:
     environment:
       - TZ=Europe/Lisbon
 
-  # Zigbee2MQTT para dispositivos Zigbee
-  zigbee2mqtt:
-    container_name: zigbee2mqtt
-    image: koenkk/zigbee2mqtt:latest
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./zigbee2mqtt/data:/app/data
-      - ./zigbee2mqtt/log:/app/log
-    environment:
-      - TZ=Europe/Lisbon
-    devices:
-      - /dev/ttyUSB1:/dev/ttyUSB1
-    depends_on:
-      - mosquitto
 
   # InfluxDB para armazenamento de dados históricos
   influxdb:

@@ -1,4 +1,5 @@
-# Configuração Simples do Home Assistant para Teste
+# Configuração Principal do Home Assistant - Casa Inteligente
+# Centro de Comando Inteligente
 
 # Configurações básicas
 default_config:
@@ -13,6 +14,13 @@ homeassistant:
   time_zone: Europe/Lisbon
   country: PT
   language: pt
+  
+  # Customizações
+  customize:
+    # Configurações específicas serão adicionadas aqui
+    
+  # Componentes incluídos
+  packages: !include_dir_named packages/
 
 # Interface web
 http:
@@ -21,6 +29,87 @@ http:
     - 127.0.0.1
     - ::1
     - 172.16.0.0/12
+
+# Logs personalizados
+logger:
+  default: info
+  logs:
+    homeassistant.components.mqtt: debug
+    homeassistant.components.automation: info
+    custom_components: debug
+
+# Sistema de notificações
+notify:
+  - platform: telegram
+    name: telegram
+    api_key: !secret telegram_api_key
+    chat_id: !secret telegram_chat_id
+    
+  - platform: email
+    name: email
+    smtp_server: smtp.gmail.com
+    smtp_port: 587
+    sender: !secret email_sender
+    username: !secret email_username
+    password: !secret email_password
+    recipient: !secret email_recipient
+
+# MQTT para comunicação com dispositivos
+mqtt:
+  broker: localhost
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true
+  birth_message:
+    topic: 'homeassistant/status'
+    payload: 'online'
+  will_message:
+    topic: 'homeassistant/status'
+    payload: 'offline'
+
+# InfluxDB para dados históricos
+influxdb:
+  host: localhost
+  port: 8086
+  database: home_assistant
+  username: admin
+  password: !secret influxdb_password
+  max_retries: 3
+  default_measurement: state
+  exclude:
+    entities:
+      - sun.sun
+      - weather.home
+
+# Sistema de backup automático
+backup:
+  name: "Backup Casa Inteligente"
+  slug: casa_inteligente_backup
+  date: "{{ now().strftime('%Y-%m-%d') }}"
+  password: !secret backup_password
+  compressed: true
+
+# Integração com serviços externos
+weather:
+  - platform: openweathermap
+    api_key: !secret openweather_api_key
+    latitude: 38.7223
+    longitude: -9.1393
+    name: "Casa"
+
+# Previsão do tempo
+forecast_solar:
+  api_key: !secret forecast_solar_api_key
+  latitude: 38.7223
+  longitude: -9.1393
+  declination: 20
+  azimuth: 180
+
+# Integração com Google
+google:
+  client_id: !secret google_client_id
+  client_secret: !secret google_client_secret
 
 # Sistema de grupos para organização
 group:
@@ -57,6 +146,26 @@ group:
       - media_player.sala
       - media_player.cozinha
       - media_player.quartos
+
+# Scripts para automações complexas
+script: !include scripts.yaml
+
+# Automações
+automation: !include automations.yaml
+
+# Cenas
+scene: !include scenes.yaml
+
+# Sensores personalizados
+sensor: !include sensors.yaml
+
+# Configurações de segurança
+auth:
+  type: trusted_networks
+  trusted_networks:
+    - 192.168.1.0/24
+    - 127.0.0.1
+    - ::1
 
 # Configurações de histórico
 recorder:
